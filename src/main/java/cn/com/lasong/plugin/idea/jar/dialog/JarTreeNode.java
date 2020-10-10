@@ -1,5 +1,8 @@
 package cn.com.lasong.plugin.idea.jar.dialog;
 
+import cn.com.lasong.plugin.idea.jar.InjectHelper;
+import cn.com.lasong.plugin.idea.jar.jdcore.JDHelper;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.File;
 import java.util.ArrayList;
@@ -31,6 +34,8 @@ public class JarTreeNode {
         if(jarNode.parent != null) {
             jarNode.parent.children.add(jarNode);
         }
+        // 添加到JDCore
+        JDHelper.appendClass(jarNode);
         return new DefaultMutableTreeNode(jarNode);
     }
 
@@ -40,12 +45,16 @@ public class JarTreeNode {
      * @param dir
      * @return
      */
-    public static DefaultMutableTreeNode createRootNode(DefaultMutableTreeNode parent, File dir) {
+    public static DefaultMutableTreeNode createDirNode(DefaultMutableTreeNode parent, File dir) {
         JarTreeNode jarNode = new JarTreeNode();
         jarNode.name = dir.getName();
         jarNode.parent = null != parent ? (JarTreeNode) parent.getUserObject() : null;
         jarNode.path = dir.getAbsolutePath();
         jarNode.children = new ArrayList<>();
+        if (null != parent) {
+            // 导入到javassist
+            InjectHelper.appendClassPath(jarNode.entryName(), jarNode.path);
+        }
         return new DefaultMutableTreeNode(jarNode);
     }
 
@@ -56,7 +65,7 @@ public class JarTreeNode {
      */
     public static DefaultMutableTreeNode createRootNode(File rootDir) {
         File file = new File(rootDir.getParent(), rootDir.getName() + ".jar");
-        return createRootNode(null, file);
+        return createDirNode(null, file);
     }
 
     /**

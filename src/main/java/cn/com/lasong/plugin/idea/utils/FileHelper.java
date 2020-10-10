@@ -1,8 +1,8 @@
 package cn.com.lasong.plugin.idea.utils;
 
+import cn.com.lasong.plugin.idea.wrap.Compressor;
+import cn.com.lasong.plugin.idea.wrap.Decompressor;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.io.Compressor;
-import com.intellij.util.io.Decompressor;
 import javassist.CtClass;
 
 import java.io.File;
@@ -10,7 +10,15 @@ import java.io.IOException;
 
 public class FileHelper {
 
-    private static final String BASE_DIR = ".temp";
+    private static final String BASE_DIR = ".androidz";
+
+    private static File getBaseDir(String basePath) {
+        File basePathDir = new File(basePath);
+
+        // 基础文件夹
+        File baseDir = new File(basePathDir.getParent(), BASE_DIR);
+        return baseDir;
+    }
 
     /**
      * 解压jar包
@@ -35,8 +43,7 @@ public class FileHelper {
             name = name.substring(0, end);
         }
 
-        // 基础文件夹
-        File baseDir = new File(basePath, BASE_DIR);
+        File baseDir = getBaseDir(basePath);
         if (!baseDir.exists()) {
             baseDir.mkdirs();
         }
@@ -82,7 +89,7 @@ public class FileHelper {
         // 输出的文件名
         String name = file.getName();
         // 基础文件夹
-        File baseDir = new File(basePath, BASE_DIR);
+        File baseDir = getBaseDir(basePath);
         if (!baseDir.exists()) {
             return null;
         }
@@ -126,9 +133,9 @@ public class FileHelper {
         if (null == basePath) {
             return null;
         }
-        File dir = new File(basePath, BASE_DIR);
-        if(FileUtil.delete(dir)) {
-            return dir;
+        File baseDir = getBaseDir(basePath);
+        if(FileUtil.delete(baseDir)) {
+            return baseDir;
         }
         return null;
     }

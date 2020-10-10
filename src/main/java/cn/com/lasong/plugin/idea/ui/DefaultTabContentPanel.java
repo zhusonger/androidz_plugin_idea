@@ -2,7 +2,7 @@ package cn.com.lasong.plugin.idea.ui;
 
 import cn.com.lasong.plugin.idea.jar.dialog.JarTreeNode;
 import cn.com.lasong.plugin.idea.jar.jdcore.JDHelper;
-import cn.com.lasong.plugin.idea.utils.PluginHelper;
+import cn.com.lasong.plugin.idea.wrap.ColorUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -102,7 +102,7 @@ public class DefaultTabContentPanel {
         boolean dark = false;
         if (null != color) {
             // 亮度
-            double luminance = PluginHelper.getLuminance(color);
+            double luminance = ColorUtil.getLuminance(color);
             // 深色系
             dark = luminance < 0.5;
         }

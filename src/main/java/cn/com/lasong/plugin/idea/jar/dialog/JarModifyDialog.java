@@ -43,16 +43,14 @@ public class JarModifyDialog extends DialogWrapper {
             @Override
             public void windowClosed(WindowEvent e) {
                 super.windowClosed(e);
-                InjectHelper.clearClassPath();
+                InjectHelper.release();
                 if (null != project && null != project.getBasePath()) {
                     String basePath = project.getBasePath();
                     File dir = FileHelper.cleanTmpDir(basePath);
-                    if (null != dir) {
-                        LocalFileSystem.getInstance().refreshAndFindFileByIoFile(dir);
-                    }
                 }
 
                 JDHelper.release();
+                InjectHelper.release();
             }
         });
         this.jarUnzipDir = jarDir;
@@ -83,7 +81,6 @@ public class JarModifyDialog extends DialogWrapper {
         // 更新树
         if (null != jarDir) {
             String name = jarDir.getName();
-            InjectHelper.appendClassPath(name, jarDir.getAbsolutePath());
             setTitle(name + ".jar");
             JarTreeHelper.updateTree(codeTree, jarDir);
         }
@@ -107,6 +104,7 @@ public class JarModifyDialog extends DialogWrapper {
         // 创建自己的jar包树路径
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(null);
         codeTree = new JXTree(root);
+        Box.createHorizontalGlue();
         codeTree.setBorder(JBUI.Borders.empty(2, 6, 0, 0));
         codeTree.setCellRenderer(new JarCellRender());
         tabbedPane = new JClosedTabbedPane();
@@ -129,7 +127,8 @@ public class JarModifyDialog extends DialogWrapper {
 
     @Override
     protected void doOKAction() {
-        if (null != jarPath && null != jarUnzipDir) {
+
+        if (update && null != jarPath && null != jarUnzipDir) {
             File dir = FileHelper.zipJar(jarPath, jarUnzipDir);
             if (null != dir) {
                 LocalFileSystem.getInstance().refreshAndFindFileByIoFile(dir);
@@ -169,6 +168,5 @@ public class JarModifyDialog extends DialogWrapper {
         if (index >= 0) {
             tabbedPane.setSelectedIndex(index);
         }
-        System.out.println(jarNode.name +"," + jarNode.entryName());// 输出这个组件toString()的字符串看一下
     }
 }

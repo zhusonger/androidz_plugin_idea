@@ -5,7 +5,6 @@ import cn.com.lasong.plugin.idea.utils.FileHelper;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.LocalFileSystem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,9 +38,6 @@ public class JarUnzipTask extends Task.Backgroundable {
     @Override
     public void onFinished() {
         super.onFinished();
-        if (null != unzipDir) {
-            LocalFileSystem.getInstance().refreshAndFindFileByIoFile(unzipDir);
-        }
         if (null != callback) {
             callback.onResult(getProject(), unzipDir, jarPath);
         }

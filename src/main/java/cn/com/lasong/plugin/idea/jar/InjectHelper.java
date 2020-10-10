@@ -53,6 +53,9 @@ public class InjectHelper {
                 jarFile.close();
             } else {
                 File clzDir = new File(path);
+                if (clzDir.isDirectory()) {
+
+                }
                 String clzDirPath = clzDir.getAbsolutePath() + File.separator;
                 List<File> clzFile = listClasses(clzDir);
                 if (!clzFile.isEmpty()) {
@@ -71,7 +74,7 @@ public class InjectHelper {
     /**
      * 移除上一次的classpath
      */
-    public synchronized static void clearClassPath() {
+    public synchronized static void release() {
         // 结束后移除这个classpool, 用同一个会有问题
         pool = null;
         clzPaths.clear();
