@@ -43,14 +43,21 @@ public class JarModifyDialog extends DialogWrapper {
             @Override
             public void windowClosed(WindowEvent e) {
                 super.windowClosed(e);
-                finish();
+                InjectHelper.clearClassPath();
+                if (null != project && null != project.getBasePath()) {
+                    String basePath = project.getBasePath();
+                    File dir = FileHelper.cleanTmpDir(basePath);
+                    if (null != dir) {
+                        LocalFileSystem.getInstance().refreshAndFindFileByIoFile(dir);
+                    }
+                }
+
+                JDHelper.release();
             }
         });
         this.jarUnzipDir = jarDir;
         this.jarPath = path;
-
-//        saveBtn.setIcon(IconsPlugin.SAVE_ICON);
-
+        
         // 添加双击打开字节码内容
         // 新开Tab页
         codeTree.addMouseListener(new MouseAdapter() {
@@ -111,24 +118,6 @@ public class JarModifyDialog extends DialogWrapper {
         return contentPanel;
     }
 
-    private void finish() {
-        InjectHelper.clearClassPath();
-
-        if (null != project && null != project.getBasePath()) {
-            String basePath = project.getBasePath();
-            File dir = FileHelper.cleanTmpDir(basePath);
-            if (null != dir) {
-                LocalFileSystem.getInstance().refreshAndFindFileByIoFile(dir);
-            }
-        }
-
-        JDHelper.release();
-        project = null;
-        jarUnzipDir = null;
-        jarPath = null;
-        update = false;
-    }
-
     @NotNull
     @Override
     protected Action[] createActions() {
@@ -140,7 +129,7 @@ public class JarModifyDialog extends DialogWrapper {
 
     @Override
     protected void doOKAction() {
-        if (update && null != jarPath && null != jarUnzipDir) {
+        if (null != jarPath && null != jarUnzipDir) {
             File dir = FileHelper.zipJar(jarPath, jarUnzipDir);
             if (null != dir) {
                 LocalFileSystem.getInstance().refreshAndFindFileByIoFile(dir);

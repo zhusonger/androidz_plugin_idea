@@ -1,6 +1,6 @@
 package cn.com.lasong.plugin.idea.jar.dialog;
 
-import icons.IconsPlugin;
+import cn.com.lasong.plugin.idea.ui.IconsPlugin;
 import org.jdesktop.swingx.tree.DefaultXTreeCellRenderer;
 
 import javax.swing.*;

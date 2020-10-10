@@ -1,4 +1,4 @@
-package icons;
+package cn.com.lasong.plugin.idea.ui;
 
 import com.intellij.icons.AllIcons;
 

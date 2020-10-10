@@ -39,7 +39,6 @@ public class JClosedTabbedPane extends JBTabbedPane {
      */
     private Component getContent(@NotNull JarTreeNode node) {
         TabContentTextPanel textPanel = new TabContentTextPanel();
-        textPanel.updateContent(node);
-        return textPanel.getContentPanel();
+        return textPanel.updateContent(node);
     }
 }

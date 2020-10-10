@@ -18,7 +18,7 @@ public class JarUnzipTask extends Task.Backgroundable {
     private File unzipDir;
 
     public JarUnzipTask(@Nullable Project project, String jarPath, IAsyncTaskCallback callback) {
-        super(project, "JarUnzip start");
+        super(project, "Jar unzip...");
         this.jarPath = jarPath;
         this.callback = callback;
     }

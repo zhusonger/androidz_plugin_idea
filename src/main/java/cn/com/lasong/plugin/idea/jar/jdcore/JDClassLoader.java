@@ -21,11 +21,17 @@ public class JDClassLoader implements Loader {
 
     @Override
     public boolean canLoad(String internalName) {
+        if (!internalName.endsWith(".class")) {
+            internalName += ".class";
+        }
         return clzMap.containsKey(internalName);
     }
 
     @Override
     public byte[] load(String internalName) {
+        if (!internalName.endsWith(".class")) {
+            internalName += ".class";
+        }
         if (!clzMap.containsKey(internalName)) {
             return new byte[0];
         }

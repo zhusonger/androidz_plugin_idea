@@ -1,8 +1,7 @@
 package cn.com.lasong.plugin.idea.jar.jdcore;
 
+import cn.com.lasong.plugin.idea.jar.dialog.JarTreeNode;
 import org.jd.core.v1.ClassFileToJavaSourceDecompiler;
-
-import java.io.File;
 
 /**
  * JDCore工具类
@@ -13,13 +12,23 @@ public class JDHelper {
     private static JDClassLoader loader = new JDClassLoader();
 
     /**
+     * 添加字节码文件
+     * @param node
+     */
+    public static void appendClass(JarTreeNode node) {
+        if (null == node) {
+            return;
+        }
+        loader.appendClz(node.entryName(), node.path);
+    }
+
+    /**
      * 反编译class
      * @param entryName
      * @param path
      * @return
      */
     public static String decompile(String entryName, String path) {
-        loader.appendClz(entryName, path);
         printer.clear();
         try {
             decompiler.decompile(loader, printer, entryName);

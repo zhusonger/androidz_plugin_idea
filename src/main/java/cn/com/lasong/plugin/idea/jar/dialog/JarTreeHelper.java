@@ -1,5 +1,6 @@
 package cn.com.lasong.plugin.idea.jar.dialog;
 
+import cn.com.lasong.plugin.idea.jar.jdcore.JDHelper;
 import cn.com.lasong.plugin.idea.utils.TreeComparator;
 
 import javax.swing.*;
@@ -11,6 +12,11 @@ import java.util.Arrays;
 
 public class JarTreeHelper {
 
+    /**
+     * 更新树节点
+     * @param tree
+     * @param dir
+     */
     public static void updateTree(JTree tree, File dir) {
         if (null == tree || null == dir) {
             return;
@@ -28,6 +34,11 @@ public class JarTreeHelper {
         tree.setModel(treeModel);
     }
 
+    /**
+     * 添加节点
+     * @param parent
+     * @param file
+     */
     private static void addTreeNodes(DefaultMutableTreeNode parent, File file) {
         if (null == parent || file == null || !file.exists()) {
             return;
@@ -49,6 +60,9 @@ public class JarTreeHelper {
 
         // 文件节点
         DefaultMutableTreeNode clzNode = JarTreeNode.createClassNode(parent, file);
+        if(clzNode.getUserObject() instanceof JarTreeNode) {
+            JDHelper.appendClass((JarTreeNode) clzNode.getUserObject());
+        }
         parent.add(clzNode);
     }
 }

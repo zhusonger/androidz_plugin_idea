@@ -1,18 +1,7 @@
 package cn.com.lasong.plugin.idea.ui;
 
-import cn.com.lasong.plugin.idea.jar.dialog.JarTreeNode;
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-import org.fife.ui.rtextarea.RTextScrollPane;
-import org.fife.ui.rtextarea.SearchEngine;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 
 public class TabContentTextPanel extends DefaultTabContentPanel {
     private JPanel contentPanel;
@@ -24,12 +13,14 @@ public class TabContentTextPanel extends DefaultTabContentPanel {
         return super.getStyle();
     }
 
+    @Override
     protected void createUIComponents() {
         super.createUIComponents();
         scrollPane = rScrollPane;
         textArea = rTextArea;
     }
 
+    @Override
     public Component getContentPanel() {
         return contentPanel;
     }

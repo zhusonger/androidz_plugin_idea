@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class FileHelper {
 
-    private static final String BASE_DIR = "out";
+    private static final String BASE_DIR = ".temp";
 
     /**
      * 解压jar包

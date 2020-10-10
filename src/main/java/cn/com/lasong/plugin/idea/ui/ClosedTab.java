@@ -2,7 +2,6 @@ package cn.com.lasong.plugin.idea.ui;
 
 import cn.com.lasong.plugin.idea.jar.dialog.JarCellRender;
 import cn.com.lasong.plugin.idea.jar.dialog.JarTreeNode;
-import icons.IconsPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;

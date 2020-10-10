@@ -6,7 +6,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -100,5 +102,22 @@ public class PluginHelper {
 
     public static void printlnErr(String group, String s) {
         error(group+": " + s);
+    }
+
+    /**
+     * 获取颜色亮度, 范围0～1
+     * @see <a href="https://www.w3.org/TR/2008/REC-WCAG20-20081211/#relativeluminancedef">W3C relative luminance definition<a/>
+     * @param color
+     * @return fff是1 000是0
+     */
+    public static double getLuminance(@NotNull Color color) {
+        return getLinearRGBComponentValue(color.getRed() / 255.0) * 0.2126 +
+                getLinearRGBComponentValue(color.getGreen() / 255.0) * 0.7152 +
+                getLinearRGBComponentValue(color.getBlue() / 255.0) * 0.0722;
+    }
+
+    private static double getLinearRGBComponentValue(double colorValue) {
+        if (colorValue <= 0.03928) return colorValue / 12.92;
+        return Math.pow(((colorValue + 0.055) / 1.055), 2.4);
     }
 }

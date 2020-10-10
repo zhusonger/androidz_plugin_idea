@@ -11,7 +11,7 @@ public class JarZipTask extends Task.Backgroundable {
 
     private String jarPath;
     public JarZipTask(@Nullable Project project, String jarPath) {
-        super(project, "JarZip start");
+        super(project, "Jar zip...");
         this.jarPath = jarPath;
     }
 
