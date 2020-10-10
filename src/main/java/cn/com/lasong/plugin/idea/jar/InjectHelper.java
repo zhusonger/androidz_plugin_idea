@@ -1,7 +1,6 @@
 package cn.com.lasong.plugin.idea.jar;
 
 
-import cn.com.lasong.plugin.idea.utils.FileHelper;
 import cn.com.lasong.plugin.idea.utils.PluginHelper;
 import javassist.*;
 import javassist.bytecode.AccessFlag;
@@ -9,6 +8,7 @@ import javassist.bytecode.CodeAttribute;
 import javassist.bytecode.Descriptor;
 import javassist.bytecode.LineNumberAttribute;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -75,6 +75,7 @@ public class InjectHelper {
      * 移除上一次的classpath
      */
     public synchronized static void release() {
+        clearJarFactoryCache();
         // 结束后移除这个classpool, 用同一个会有问题
         pool = null;
         clzPaths.clear();
@@ -115,20 +116,6 @@ public class InjectHelper {
         }
     }
 
-    /**
-     * 准备环境
-     * @param jarPath jar包路径
-     */
-    public static File prepareEnv(String jarPath, String basePath) {
-        // 清楚缓存
-        clearJarFactoryCache();
-        if (null == jarPath || !jarPath.toLowerCase().endsWith(".jar")) {
-            return null;
-        }
-
-        return FileHelper.unzipJar(jarPath, basePath);
-
-    }
 
     /**
      * 处理三方的库
@@ -443,6 +430,9 @@ public class InjectHelper {
         }
     }
 
+    public static void injectClass(@NotNull String entryName, @NotNull InjectClzModify clzModify) {
+
+    }
     /**
      * 注入类
      *

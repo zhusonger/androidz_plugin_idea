@@ -16,6 +16,7 @@ public class TabContentTextPanel extends DefaultTabContentPanel {
     @Override
     protected void createUIComponents() {
         super.createUIComponents();
+        contentPanel = wrappedPanel(this);
         scrollPane = rScrollPane;
         textArea = rTextArea;
     }

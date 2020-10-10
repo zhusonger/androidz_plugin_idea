@@ -138,4 +138,11 @@ public class DefaultTabContentPanel {
     protected Component getContentPanel() {
         return null;
     }
+
+    protected final <T> JPanel wrappedPanel(T data) {
+        return new WrappedJPanel<>(data);
+    }
+    public JarTreeNode getJarNode() {
+        return jarNode;
+    }
 }
