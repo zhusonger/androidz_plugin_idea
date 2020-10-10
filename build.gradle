@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.intellij' version '0.5.0'
+}
+
+group 'cn.com.lasong.plugin.idea'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // javassist 相关修改字节码
+    implementation 'org.javassist:javassist:3.27.0-GA'
+    // 字节码转文本
+    implementation 'org.jd:jd-core:1.1.3'
+    // 高亮显示的textarea
+    implementation 'com.fifesoft:rsyntaxtextarea:3.1.1'
+}
+
+// See https://github.com/JetBrains/gradle-intellij-plugin/
+intellij {
+    version '2020.2.1'
+}
+patchPluginXml {
+    changeNotes """
+      <h1> Release Note </h1>
+      <br/>
+      <p><b>A plugin for reverse engineering by apktool & javassist & jd-core.</b></p>
+      <br/>
+      <ul>
+        <li>v1.0 init</li>
+      </ul>"""
+}

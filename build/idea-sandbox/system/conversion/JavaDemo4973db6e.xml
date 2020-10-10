@@ -1,0 +1,17 @@
+<conversion>
+  <applied-converters>
+    <converter id="kotlin-non-jvm-source-roots" />
+    <converter id="junit-to-android-junit-configurations" />
+    <converter id="android-sdk-library" />
+    <converter id="android-module-to-java-module" />
+    <converter id="android-proguard-options" />
+  </applied-converters>
+  <project-files>
+    <file path="/Users/youxi/IdeaProjects/JavaDemo/JavaDemo.iml" timestamp="1602293500645" />
+    <file path="/Users/youxi/IdeaProjects/JavaDemo/.idea/libraries/apktool.xml" timestamp="1602293500688" />
+    <file path="/Users/youxi/IdeaProjects/JavaDemo/.idea/misc.xml" timestamp="1600346201284" />
+    <file path="/Users/youxi/IdeaProjects/JavaDemo/sub/sub.iml" timestamp="1600431214360" />
+    <file path="/Users/youxi/IdeaProjects/JavaDemo/.idea/modules.xml" timestamp="1600431214388" />
+    <file path="/Users/youxi/IdeaProjects/JavaDemo/.idea/workspace.xml" timestamp="1601357052642" />
+  </project-files>
+</conversion>
