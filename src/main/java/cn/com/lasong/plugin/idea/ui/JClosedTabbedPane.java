@@ -38,21 +38,8 @@ public class JClosedTabbedPane extends JBTabbedPane {
      * @return
      */
     private Component getContent(@NotNull JarTreeNode node) {
-        String name = node.name;
-        int index = name.lastIndexOf(".");
-        String suffix = null;
-        if (index > 0) {
-            suffix = name.substring(index + 1).toLowerCase();
-        }
-        Component component = null;
-        //  字节码
-        if (null != suffix && suffix.equalsIgnoreCase("class")) {
-
-        } else {
-            TabContentTextPanel textPanel = new TabContentTextPanel();
-            textPanel.updateContent(node);
-            component = textPanel.contentPanel;
-        }
-        return component;
+        TabContentTextPanel textPanel = new TabContentTextPanel();
+        textPanel.updateContent(node);
+        return textPanel.getContentPanel();
     }
 }

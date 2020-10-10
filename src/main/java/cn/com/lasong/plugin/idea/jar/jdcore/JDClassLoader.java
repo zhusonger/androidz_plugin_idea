@@ -1,48 +1,63 @@
 package cn.com.lasong.plugin.idea.jar.jdcore;
 
+import com.intellij.openapi.util.io.FileUtil;
 import org.apache.commons.io.IOUtils;
 import org.jd.core.v1.api.loader.Loader;
 import org.jd.core.v1.api.loader.LoaderException;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 public class JDClassLoader implements Loader {
-    private JarFile jarFile;
+    private Map<String, File> clzMap = new HashMap<>();
 
-    public JDClassLoader(String path) {
-        try {
-            jarFile = new JarFile(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public JDClassLoader(JarFile jarFile) {
-        this.jarFile = jarFile;
+    public JDClassLoader() {
     }
 
     @Override
     public boolean canLoad(String internalName) {
-        if (null != jarFile) {
-            JarEntry entry = jarFile.getJarEntry(internalName);
-            return entry != null;
-        }
-        return false;
+        return clzMap.containsKey(internalName);
     }
 
     @Override
-    public byte[] load(String internalName) throws LoaderException {
-        if (null != jarFile) {
-            ZipEntry entry = jarFile.getEntry(internalName);
-            try {
-                return IOUtils.toByteArray(jarFile.getInputStream(entry));
-            } catch (IOException e) {
-                throw new LoaderException(e);
-            }
+    public byte[] load(String internalName) {
+        if (!clzMap.containsKey(internalName)) {
+            return new byte[0];
         }
-        return null;
+        File file = clzMap.get(internalName);
+        try {
+            return FileUtil.loadFileBytes(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new byte[0];
+    }
+
+    /**
+     * 添加支持的字节码文件
+     * @param entryName
+     * @param path
+     */
+    public void appendClz(String entryName, String path) {
+        if (null == path) {
+            return;
+        }
+        File file = new File(path);
+        if (!file.exists()) {
+            return;
+        }
+        clzMap.put(entryName, file);
+    }
+
+    /**
+     * 清空字节码文件
+     */
+    public void clear() {
+        clzMap.clear();
     }
 }

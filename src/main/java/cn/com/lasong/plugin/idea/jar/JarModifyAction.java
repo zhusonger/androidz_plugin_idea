@@ -2,6 +2,7 @@ package cn.com.lasong.plugin.idea.jar;
 
 import cn.com.lasong.plugin.idea.base.DefaultAction;
 import cn.com.lasong.plugin.idea.jar.dialog.JarModifyDialog;
+import cn.com.lasong.plugin.idea.jar.jdcore.JDHelper;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
 import com.intellij.openapi.project.Project;

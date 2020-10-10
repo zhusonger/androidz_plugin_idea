@@ -84,4 +84,8 @@ public class JDPrinter implements Printer {
     @Override
     public void endMarker(int type) {
     }
+
+    public void clear() {
+        sb.setLength(0);
+    }
 }

@@ -1,6 +1,7 @@
 package cn.com.lasong.plugin.idea.jar.dialog;
 
 import cn.com.lasong.plugin.idea.jar.InjectHelper;
+import cn.com.lasong.plugin.idea.jar.jdcore.JDHelper;
 import cn.com.lasong.plugin.idea.ui.ClosedTab;
 import cn.com.lasong.plugin.idea.ui.JClosedTabbedPane;
 import cn.com.lasong.plugin.idea.utils.FileHelper;
@@ -121,6 +122,7 @@ public class JarModifyDialog extends DialogWrapper {
             }
         }
 
+        JDHelper.release();
         project = null;
         jarUnzipDir = null;
         jarPath = null;

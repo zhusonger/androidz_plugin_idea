@@ -2,3 +2,6 @@
 /.idea/
 /AndroidzForDex.iml
 *.zip
+/.gradle
+/.idea
+build
