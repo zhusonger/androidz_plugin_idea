@@ -1,17 +1,12 @@
 package cn.com.lasong.plugin.idea.jar.jdcore;
 
 import com.intellij.openapi.util.io.FileUtil;
-import org.apache.commons.io.IOUtils;
 import org.jd.core.v1.api.loader.Loader;
-import org.jd.core.v1.api.loader.LoaderException;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
 
 public class JDClassLoader implements Loader {
     private Map<String, File> clzMap = new HashMap<>();

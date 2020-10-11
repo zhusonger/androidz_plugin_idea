@@ -1,10 +1,9 @@
 package cn.com.lasong.plugin.idea.jar.dialog;
 
-import cn.com.lasong.plugin.idea.jar.InjectClzModify;
 import cn.com.lasong.plugin.idea.jar.InjectHelper;
-import cn.com.lasong.plugin.idea.jar.InjectModifyMethod;
 import cn.com.lasong.plugin.idea.jar.jdcore.JDHelper;
-import cn.com.lasong.plugin.idea.ui.*;
+import cn.com.lasong.plugin.idea.ui.ClosedTab;
+import cn.com.lasong.plugin.idea.ui.JClosedTabbedPane;
 import cn.com.lasong.plugin.idea.utils.FileHelper;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -23,7 +22,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Random;
 
 public class JarModifyDialog extends DialogWrapper {
 
@@ -127,26 +125,7 @@ public class JarModifyDialog extends DialogWrapper {
 
     @Override
     protected void doOKAction() {
-
-        Component component = tabbedPane.getSelectedComponent();
-        DefaultTabContentPanel panel = (DefaultTabContentPanel) ((WrappedJPanel)component).getData();
-        JarTreeNode jarNode = panel.getJarNode();
-        String entryName = jarNode.entryName();
-        if (entryName.endsWith(".class")) {
-            InjectClzModify clzModify = new InjectClzModify();
-            InjectModifyMethod[] methods = new InjectModifyMethod[1];
-            InjectModifyMethod method = new InjectModifyMethod();
-            method.action = InjectModifyMethod.ACTION_ADD_FIELD;
-            Random random = new Random(System.currentTimeMillis());
-            method.content = "public int testValue_"+random.nextInt(10)+";";
-            methods[0] = method;
-            clzModify.setModifyMethods(methods);
-            // brut/apktool/Main.class
-            // {"className":"null","importPackages":null,"modifyMethods":[{"action":"MODIFY","modifiers":"null","name":"null","params":"null","content":"public int testValue_-1741296790;","newName":"null","type":"ADD_FIELD","lineNum":-1,"lineRange":null}],"isInject":true}
-            InjectHelper.injectClass(entryName, clzModify);
-        }
-
-        if (update && null != jarPath && null != jarUnzipDir) {
+        if (null != jarPath && null != jarUnzipDir) {
             File dir = FileHelper.zipJar(jarPath, jarUnzipDir);
             if (null != dir) {
                 LocalFileSystem.getInstance().refreshAndFindFileByIoFile(dir);

@@ -12,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -19,8 +21,15 @@ public class DefaultTabContentPanel {
     protected RTextScrollPane rScrollPane;
     protected RSyntaxTextArea rTextArea;
     protected JarTreeNode jarNode;
+    protected JPopupMenu popupMenu;
 
     public DefaultTabContentPanel() {
+        popupMenu = new JPopupMenu();
+        JMenuItem modifyItem = new JMenuItem("Modify");
+        popupMenu.add(modifyItem);
+        modifyItem.addActionListener(e -> {
+            modifyContent(jarNode);
+        });
     }
 
     /**
@@ -98,6 +107,16 @@ public class DefaultTabContentPanel {
         rTextArea.setEditable(false);
         rTextArea.setDropTarget(null);
         rTextArea.setPopupMenu(null);
+        rTextArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+                if (e.getButton() == MouseEvent.BUTTON3) {
+                    //弹出右键菜单
+                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
+                }
+            }
+        });
         Color color = UIManager.getColor("TextArea.background");
         boolean dark = false;
         if (null != color) {
@@ -142,7 +161,16 @@ public class DefaultTabContentPanel {
     protected final <T> JPanel wrappedPanel(T data) {
         return new WrappedJPanel<>(data);
     }
+
     public JarTreeNode getJarNode() {
         return jarNode;
+    }
+
+    /**
+     * 修改内容
+     * @param node
+     */
+    protected void modifyContent(JarTreeNode node) {
+
     }
 }

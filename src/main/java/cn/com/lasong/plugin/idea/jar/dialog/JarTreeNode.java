@@ -51,10 +51,6 @@ public class JarTreeNode {
         jarNode.parent = null != parent ? (JarTreeNode) parent.getUserObject() : null;
         jarNode.path = dir.getAbsolutePath();
         jarNode.children = new ArrayList<>();
-        if (null != parent) {
-            // 导入到javassist
-            InjectHelper.appendClassPath(jarNode.entryName(), jarNode.path);
-        }
         return new DefaultMutableTreeNode(jarNode);
     }
 
@@ -64,7 +60,9 @@ public class JarTreeNode {
      * @return
      */
     public static DefaultMutableTreeNode createRootNode(File rootDir) {
-        File file = new File(rootDir.getParent(), rootDir.getName() + ".jar");
+        String name = rootDir.getName();
+        InjectHelper.appendClassPath(name, rootDir.getAbsolutePath());
+        File file = new File(rootDir.getParent(), name + ".jar");
         return createDirNode(null, file);
     }
 
@@ -83,6 +81,16 @@ public class JarTreeNode {
             parentName += "/";
         }
         return parentName + name;
+    }
+
+
+    public String className() {
+        String entryName = entryName();
+        if (null != entryName) {
+            entryName = entryName.replace("/", ".");
+            entryName = entryName.replace(".class", "");
+        }
+        return entryName;
     }
 
     @Override
