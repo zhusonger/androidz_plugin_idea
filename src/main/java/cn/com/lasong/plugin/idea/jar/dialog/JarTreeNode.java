@@ -1,6 +1,6 @@
 package cn.com.lasong.plugin.idea.jar.dialog;
 
-import cn.com.lasong.plugin.idea.jar.InjectHelper;
+import cn.com.lasong.plugin.idea.jar.inject.InjectHelper;
 import cn.com.lasong.plugin.idea.jar.jdcore.JDHelper;
 
 import javax.swing.tree.DefaultMutableTreeNode;

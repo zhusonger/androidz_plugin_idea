@@ -4,6 +4,7 @@ import com.intellij.notification.NotificationGroup;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
@@ -15,6 +16,27 @@ public class PluginHelper {
 
     private static final NotificationGroup ERROR = NotificationGroup.balloonGroup("AndroidZ Idea (Errors)");
     private static final NotificationGroup INFO = NotificationGroup.logOnlyGroup("AndroidZ Idea (Info)");
+
+    private static Project PROJECT;
+
+    /**
+     * 设置项目
+     * @param project
+     */
+    public static void setProject(Project project) {
+        if (null == PluginHelper.PROJECT || PluginHelper.PROJECT == project) {
+            return;
+        }
+        PluginHelper.PROJECT = project;
+    }
+
+    /**
+     * 获取当前项目的Project
+     * @return
+     */
+    public static Project getProject() {
+        return PROJECT;
+    }
 
     /**
      * 获取右键action点击的文件

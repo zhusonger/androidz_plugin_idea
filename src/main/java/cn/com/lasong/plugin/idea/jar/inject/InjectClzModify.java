@@ -1,4 +1,4 @@
-package cn.com.lasong.plugin.idea.jar;
+package cn.com.lasong.plugin.idea.jar.inject;
 
 import java.util.Arrays;
 import java.util.List;

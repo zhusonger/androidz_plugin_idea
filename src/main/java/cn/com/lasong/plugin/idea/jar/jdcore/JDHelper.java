@@ -25,10 +25,9 @@ public class JDHelper {
     /**
      * 反编译class
      * @param entryName
-     * @param path
      * @return
      */
-    public static String decompile(String entryName, String path) {
+    public static String decompile(String entryName) {
         printer.clear();
         try {
             decompiler.decompile(loader, printer, entryName);

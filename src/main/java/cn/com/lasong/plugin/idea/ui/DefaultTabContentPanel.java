@@ -51,7 +51,7 @@ public class DefaultTabContentPanel {
         }
         if (null != suffix) {
             if(suffix.equalsIgnoreCase("class")) {
-                content = JDHelper.decompile(node.entryName(), node.path);
+                content = JDHelper.decompile(node.entryName());
             } else if (suffix.equalsIgnoreCase("txt")
                     || suffix.equalsIgnoreCase("mf")
                     || suffix.equalsIgnoreCase("config")

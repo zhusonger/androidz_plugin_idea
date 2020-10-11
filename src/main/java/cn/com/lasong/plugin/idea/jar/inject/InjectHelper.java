@@ -1,6 +1,7 @@
-package cn.com.lasong.plugin.idea.jar;
+package cn.com.lasong.plugin.idea.jar.inject;
 
 
+import cn.com.lasong.plugin.idea.jar.dialog.JarTreeNode;
 import cn.com.lasong.plugin.idea.utils.PluginHelper;
 import javassist.*;
 import javassist.bytecode.AccessFlag;
@@ -112,6 +113,30 @@ public class InjectHelper {
         ClassPath cachePath = clzPaths.get(tag);
         if (null != cachePath) {
             pool.removeClassPath(cachePath);
+        }
+    }
+
+    public static void updateMethods(JarTreeNode node) {
+        String className = node.className();
+        CtClass ctClass = null;
+        try {
+            ctClass = pool.get(className);
+            CtMethod[] methods = ctClass.getMethods();
+            if (null == methods) {
+                return;
+            }
+            for (CtMethod method : methods) {
+                String signature = method.getGenericSignature();
+                String longName = method.getLongName();
+                String name = method.getName();
+                String signature2 = method.getSignature();
+            }
+        }catch (Exception e){
+            PluginHelper.error(e);
+        } finally {
+            if (null != ctClass) {
+                ctClass.detach();
+            }
         }
     }
 
