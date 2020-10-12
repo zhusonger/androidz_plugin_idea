@@ -47,9 +47,7 @@ public class TabContentTextPanel extends DefaultTabContentPanel implements IResu
         boolean ret = (boolean) result[0];
         if (ret) {
             String content = JDHelper.decompile(jarNode.entryName());
-            int position = textArea.getCaretPosition();
             textArea.setText(content);
-            textArea.setCaretPosition(position);
         }
     }
 }

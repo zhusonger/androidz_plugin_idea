@@ -47,6 +47,7 @@ public class ModifyDialog extends DialogWrapper {
     private JPanel deletePanel;
     private JPanel methodPanel;
     private JPanel insertPanel;
+    private JTextField modifiersTextField;
     private JTextArea codeTextArea;
     private JScrollPane codeScrollPane;
     private final CardLayout optionLayout;
@@ -129,10 +130,12 @@ public class ModifyDialog extends DialogWrapper {
                 clzModify.modifiers = clzModifyTextField.getText();
             }
             model.action = action;
+            model.type = (String) typeComboBox.getSelectedItem();
             model.content = contentTextArea.getText();
             model.lineNum = (int) lineNumSpinner.getValue();
             model.lineRange = rangeTextField.getText();
             model.newName = methodTextField.getText();
+            model.modifiers = modifiersTextField.getText();
             clzModify.setModifyMethods(new InjectModifyMethod[]{model});
             byte[] buffer = InjectHelper.injectClass(clzModify);
             if (null != buffer) {
