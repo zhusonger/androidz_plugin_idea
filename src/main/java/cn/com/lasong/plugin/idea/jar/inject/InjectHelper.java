@@ -4,10 +4,7 @@ package cn.com.lasong.plugin.idea.jar.inject;
 import cn.com.lasong.plugin.idea.jar.dialog.JarTreeNode;
 import cn.com.lasong.plugin.idea.utils.PluginHelper;
 import javassist.*;
-import javassist.bytecode.AccessFlag;
-import javassist.bytecode.CodeAttribute;
-import javassist.bytecode.Descriptor;
-import javassist.bytecode.LineNumberAttribute;
+import javassist.bytecode.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
@@ -191,24 +188,31 @@ public class InjectHelper {
         return builder.toString();
     }
 
-    public static List<InjectModifyMethod> getMethods(JarTreeNode node) {
+    /**
+     * 获取所有方法
+     * @param node
+     * @return
+     */
+    public static List<JMethodModel> getMethods(JarTreeNode node) {
         String className = node.className();
         CtClass ctClass = null;
-        List<InjectModifyMethod> methods = new ArrayList<>();
+        List<JMethodModel> methods = new ArrayList<>();
         try {
             ctClass = pool.get(className);
-            CtMethod[] ctMethods = ctClass.getMethods();
-            String cd = Descriptor.of(className);
+            CtMethod[] ctMethods = ctClass.getDeclaredMethods();
             if (null != ctMethods && ctMethods.length > 0) {
                 for (CtMethod method : ctMethods) {
-                    InjectModifyMethod m = new InjectModifyMethod();
+                    JMethodModel m = new JMethodModel();
                     m.name = method.getName();
-                    m.params = method.getGenericSignature();
+                    String params = method.getSignature();
+                    MethodInfo methodInfo = method.getMethodInfo();
+                    if (null != methodInfo) {
+                        params = Descriptor.getParamDescriptor(methodInfo.getDescriptor());
+                    } else if (null != params){
+                        params = params.substring(0, params.indexOf(')') + 1);
+                    }
+                    m.params = params;
                     methods.add(m);
-                    String signature = method.getGenericSignature();
-                    String longName = method.getLongName();
-                    String name = method.getName();
-                    String signature2 = method.getSignature();
                 }
             }
         }catch (Exception e){
@@ -222,11 +226,14 @@ public class InjectHelper {
         return methods;
     }
 
+    public static byte[] injectClass(@NotNull InjectClzModify clzModify) {
+        return injectClass(true, clzModify);
+    }
+
     /**
      * 注入类
      */
-    public static byte[] injectClass(@NotNull InjectClzModify clzModify) {
-        boolean injectDebug = true;
+    public static byte[] injectClass(boolean injectDebug, @NotNull InjectClzModify clzModify) {
         byte[] buffer = null;
         String className = clzModify.className;
         CtClass ctClass = null;

@@ -102,7 +102,6 @@ public class JarModifyDialog extends DialogWrapper {
         // 创建自己的jar包树路径
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(null);
         codeTree = new JXTree(root);
-        Box.createHorizontalGlue();
         codeTree.setBorder(JBUI.Borders.empty(2, 6, 0, 0));
         codeTree.setCellRenderer(new JarCellRender());
         tabbedPane = new JClosedTabbedPane();

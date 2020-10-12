@@ -94,7 +94,7 @@
           <size top="0" left="5" bottom="5" right="5"/>
         </border>
         <children>
-          <grid id="f38eb" layout-manager="GridLayoutManager" row-count="2" column-count="10" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
+          <grid id="f38eb" layout-manager="GridLayoutManager" row-count="2" column-count="11" same-size-horizontally="false" same-size-vertically="false" hgap="0" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints border-constraint="North"/>
             <properties/>
@@ -114,12 +114,12 @@
               <component id="36a27" class="javax.swing.JComboBox" binding="actionComboBox">
                 <constraints>
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="1" indent="0" use-parent-layout="false">
-                    <preferred-size width="88" height="-1"/>
+                    <preferred-size width="108" height="-1"/>
                   </grid>
                 </constraints>
                 <properties>
                   <model>
-                    <item value="modfiyMethod"/>
+                    <item value="modify"/>
                     <item value="addField"/>
                     <item value="addMethod"/>
                   </model>
@@ -128,7 +128,7 @@
               </component>
               <grid id="8bc41" binding="optionPanel" layout-manager="CardLayout" hgap="0" vgap="0">
                 <constraints>
-                  <grid row="1" column="1" row-span="1" col-span="8" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="1" column="1" row-span="1" col-span="9" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
                   <visible value="true"/>
@@ -138,10 +138,6 @@
                   <grid id="7eeba" binding="modifyPanel" layout-manager="FormLayout">
                     <rowspec value="center:d:grow"/>
                     <colspec value="fill:d:noGrow"/>
-                    <colspec value="left:4dlu:noGrow"/>
-                    <colspec value="fill:d:grow"/>
-                    <colspec value="left:4dlu:noGrow"/>
-                    <colspec value="fill:max(d;4px):noGrow"/>
                     <colspec value="left:4dlu:noGrow"/>
                     <colspec value="fill:d:grow"/>
                     <constraints>
@@ -172,28 +168,12 @@
                           <toolTipText value="如果需要修改方法名, 这里输入新的方法名"/>
                         </properties>
                       </component>
-                      <component id="96c0a" class="javax.swing.JLabel">
-                        <constraints>
-                          <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                          <forms/>
-                        </constraints>
-                        <properties>
-                          <text value="LineNum"/>
-                        </properties>
-                      </component>
-                      <component id="d50c1" class="javax.swing.JSpinner" binding="lineNumSpinner">
-                        <constraints>
-                          <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
-                          <forms defaultalign-horz="false"/>
-                        </constraints>
-                        <properties/>
-                      </component>
                     </children>
                   </grid>
-                  <grid id="12dd0" binding="rangePanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                  <grid id="12dd0" binding="deletePanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                     <margin top="0" left="0" bottom="0" right="0"/>
                     <constraints>
-                      <card name="range"/>
+                      <card name="delete"/>
                     </constraints>
                     <properties/>
                     <border type="none"/>
@@ -219,14 +199,41 @@
                       </component>
                     </children>
                   </grid>
+                  <grid id="365e2" binding="insertPanel" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                    <margin top="0" left="0" bottom="0" right="0"/>
+                    <constraints>
+                      <card name="insert"/>
+                    </constraints>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="96c0a" class="javax.swing.JLabel">
+                        <constraints>
+                          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <text value="LineNum"/>
+                        </properties>
+                      </component>
+                      <component id="d50c1" class="javax.swing.JSpinner" binding="lineNumSpinner">
+                        <constraints>
+                          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                        </constraints>
+                        <properties>
+                          <toolTipText value="相对于方法的行数, 最前面就是0"/>
+                        </properties>
+                      </component>
+                    </children>
+                  </grid>
                 </children>
               </grid>
               <grid id="2dba9" binding="methodPanel" layout-manager="GridLayoutManager" row-count="1" column-count="4" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
                 <margin top="0" left="0" bottom="0" right="0"/>
                 <constraints>
-                  <grid row="0" column="5" row-span="1" col-span="4" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="4" row-span="1" col-span="6" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <enabled value="false"/>
                   <visible value="true"/>
                 </properties>
                 <border type="none"/>
@@ -268,11 +275,6 @@
                   </component>
                 </children>
               </grid>
-              <hspacer id="ea720">
-                <constraints>
-                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                </constraints>
-              </hspacer>
               <hspacer id="e6ee6">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false">
@@ -282,7 +284,14 @@
               </hspacer>
               <hspacer id="e9833">
                 <constraints>
-                  <grid row="0" column="9" row-span="1" col-span="1" vsize-policy="1" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                  <grid row="0" column="10" row-span="1" col-span="1" vsize-policy="1" hsize-policy="0" anchor="0" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="5" height="-1"/>
+                  </grid>
+                </constraints>
+              </hspacer>
+              <hspacer id="b9f49">
+                <constraints>
+                  <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="1" hsize-policy="2" anchor="0" fill="0" indent="0" use-parent-layout="false">
                     <preferred-size width="5" height="-1"/>
                   </grid>
                 </constraints>
