@@ -23,12 +23,6 @@ public class InjectClzModify {
     // 导入包
     public List<String> importPackages;
 
-    // 新增属性
-//    public List<String> addFields;
-
-    // 新增方法
-//    public List<String> addMethods;
-
     // 方法修改
     public List<InjectModifyMethod> modifyMethods;
     // 是否注入
@@ -65,22 +59,6 @@ public class InjectClzModify {
         this.className = className;
     }
 
-//    public List<String> getAddFields() {
-//        return addFields;
-//    }
-//
-//    public void setAddFields(List<String> addFields) {
-//        this.addFields = addFields;
-//    }
-//
-//    public List<String> getAddMethods() {
-//        return addMethods;
-//    }
-//
-//    public void setAddMethods(List<String> addMethods) {
-//        this.addMethods = addMethods;
-//    }
-
     public boolean isInject() {
         return isInject;
     }
@@ -104,10 +82,6 @@ public class InjectClzModify {
                 .append(className).append('\"');
         sb.append(",\"importPackages\":")
                 .append(importPackages);
-//        sb.append(",\"addFields\":")
-//                .append(addFields);
-//        sb.append(",\"addMethods\":")
-//                .append(addMethods);
         sb.append(",\"modifyMethods\":")
                 .append(modifyMethods);
         sb.append(",\"isInject\":")

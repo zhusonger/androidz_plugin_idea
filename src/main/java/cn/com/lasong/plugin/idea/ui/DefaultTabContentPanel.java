@@ -2,18 +2,14 @@ package cn.com.lasong.plugin.idea.ui;
 
 import cn.com.lasong.plugin.idea.jar.dialog.JarTreeNode;
 import cn.com.lasong.plugin.idea.jar.jdcore.JDHelper;
-import cn.com.lasong.plugin.idea.wrap.ColorUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -24,12 +20,6 @@ public class DefaultTabContentPanel {
     protected JPopupMenu popupMenu;
 
     public DefaultTabContentPanel() {
-        popupMenu = new JPopupMenu();
-        JMenuItem modifyItem = new JMenuItem("Modify");
-        popupMenu.add(modifyItem);
-        modifyItem.addActionListener(e -> {
-            modifyContent(jarNode);
-        });
     }
 
     /**
@@ -100,58 +90,15 @@ public class DefaultTabContentPanel {
     }
 
     protected void createUIComponents() {
-        rTextArea = new RSyntaxTextArea();
-        rTextArea.setCodeFoldingEnabled(true);
-        rTextArea.setAntiAliasingEnabled(true);
-        rTextArea.setCaretPosition(0);
-        rTextArea.setEditable(false);
-        rTextArea.setDropTarget(null);
-        rTextArea.setPopupMenu(null);
-        rTextArea.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if (e.getButton() == MouseEvent.BUTTON3) {
-                    //弹出右键菜单
-                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
-                }
-            }
+        rTextArea = UIHelper.createRSyntaxTextArea();
+        popupMenu = rTextArea.getPopupMenu();
+        JMenuItem modifyItem = new JMenuItem("Modify");
+        popupMenu.add(modifyItem);
+        modifyItem.addActionListener(e -> {
+            modifyContent(jarNode);
         });
-        Color color = UIManager.getColor("TextArea.background");
-        boolean dark = false;
-        if (null != color) {
-            // 亮度
-            double luminance = ColorUtil.getLuminance(color);
-            // 深色系
-            dark = luminance < 0.5;
-        }
-        // 更换主题
-        try {
-            String themeXml = dark ? "dark.xml" : "eclipse.xml";
-            Theme theme = Theme.load(getClass().getClassLoader().getResourceAsStream("/org/fife/ui/rsyntaxtextarea/themes/"+themeXml));
-            theme.apply(rTextArea);
-        } catch (IOException ignored) {}
-
-        // 替换系统的颜色
-        if (UIManager.getFont("TextArea.font") != null) {
-            rTextArea.setFont(UIManager.getFont("TextArea.font"));
-        }
-        if (UIManager.getColor("TextArea.background") != null) {
-            rTextArea.setBackground(UIManager.getColor("TextArea.background"));
-        }
-        if (UIManager.getColor("TextArea.caretForeground") != null) {
-            rTextArea.setCaretColor(UIManager.getColor("TextArea.caretForeground"));
-        }
-        if (UIManager.getColor("TextArea.selectionForeground") != null) {
-            rTextArea.setSelectedTextColor(UIManager.getColor("TextArea.selectionForeground"));
-        }
-        if (UIManager.getColor("TextArea.selectionBackground") != null) {
-            rTextArea.setSelectionColor(UIManager.getColor("TextArea.selectionBackground"));
-        }
-        rScrollPane = new RTextScrollPane(rTextArea);
-        rScrollPane.setLineNumbersEnabled(true);
-        rScrollPane.setFoldIndicatorEnabled(true);
-        rScrollPane.setFont(rTextArea.getFont());
+        rTextArea.setPopupMenu(popupMenu);
+        rScrollPane = UIHelper.createScrollPane(rTextArea);
     }
 
     protected Component getContentPanel() {
