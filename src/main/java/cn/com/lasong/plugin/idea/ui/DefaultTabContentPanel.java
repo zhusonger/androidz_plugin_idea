@@ -56,9 +56,22 @@ public class DefaultTabContentPanel {
         }
 
         if (null != content) {
+            String style = getStyle();
             rTextArea.setText(content);
-            rTextArea.setSyntaxEditingStyle(getStyle());
+            rTextArea.setSyntaxEditingStyle(style);
             rTextArea.setCaretPosition(0);
+            if (SyntaxConstants.SYNTAX_STYLE_JAVA.equalsIgnoreCase(style)) {
+                popupMenu = rTextArea.getPopupMenu();
+                JMenuItem modifyItem = new JMenuItem("修改");
+                popupMenu.add(modifyItem, 0);
+                modifyItem.addActionListener(e -> {
+                    modifyContent(jarNode);
+                });
+                rTextArea.setPopupMenu(popupMenu);
+            } else {
+                popupMenu = rTextArea.getPopupMenu();
+                rTextArea.setPopupMenu(popupMenu);
+            }
             return getContentPanel();
         }
         return null;
@@ -91,13 +104,6 @@ public class DefaultTabContentPanel {
 
     protected void createUIComponents() {
         rTextArea = UIHelper.createRSyntaxTextArea();
-        popupMenu = rTextArea.getPopupMenu();
-        JMenuItem modifyItem = new JMenuItem("Modify");
-        popupMenu.add(modifyItem);
-        modifyItem.addActionListener(e -> {
-            modifyContent(jarNode);
-        });
-        rTextArea.setPopupMenu(popupMenu);
         rScrollPane = UIHelper.createScrollPane(rTextArea);
     }
 

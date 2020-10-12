@@ -12,7 +12,7 @@ public class FileHelper {
 
     private static final String BASE_DIR = ".androidz";
 
-    private static File getBaseDir(String basePath) {
+    private static synchronized File getBaseDir(String basePath) {
         File basePathDir = new File(basePath);
 
         // 基础文件夹

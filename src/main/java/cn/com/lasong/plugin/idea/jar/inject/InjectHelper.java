@@ -116,20 +116,100 @@ public class InjectHelper {
         }
     }
 
-    public static void updateMethods(JarTreeNode node) {
+    /**
+     * 转换成字符串
+     * @param modifiers
+     * @return
+     */
+    public static String ofModifiers(int modifiers) {
+        List<String> list = new ArrayList<>();
+        if (AccessFlag.isPublic(modifiers)) {
+            list.add("public");
+        } else if (AccessFlag.isProtected(modifiers)) {
+            list.add("protected");
+        } else if (AccessFlag.isPrivate(modifiers)) {
+            list.add("private");
+        }
+
+        if((modifiers & AccessFlag.STATIC) != 0) {
+            list.add("static");
+        }
+
+        if((modifiers & AccessFlag.ABSTRACT) != 0) {
+            list.add("abstract");
+        }
+
+        if((modifiers & AccessFlag.FINAL) != 0) {
+            list.add("final");
+        }
+
+        if((modifiers & AccessFlag.VOLATILE) != 0) {
+            list.add("volatile");
+        }
+
+        if((modifiers & AccessFlag.SYNCHRONIZED) != 0) {
+            list.add("synchronized");
+        }
+
+        if((modifiers & AccessFlag.NATIVE) != 0) {
+            list.add("native");
+        }
+
+        if((modifiers & AccessFlag.ENUM) != 0) {
+            list.add("enum");
+        }
+
+        StringBuilder builder = new StringBuilder();
+        for (String item : list) {
+            builder.append(item).append(" ");
+        }
+        builder.deleteCharAt(builder.length() - 1);
+        return builder.toString();
+    }
+
+    /**
+     * 获取类的修饰符
+     * @param node
+     * @return
+     */
+    public static String getClassModifiers(JarTreeNode node) {
         String className = node.className();
         CtClass ctClass = null;
+        StringBuilder builder = new StringBuilder();
         try {
             ctClass = pool.get(className);
-            CtMethod[] methods = ctClass.getMethods();
-            if (null == methods) {
-                return;
+            String modifiers = ofModifiers(ctClass.getModifiers());
+            builder.append(modifiers);
+        }catch (Exception e){
+            PluginHelper.error(e);
+        } finally {
+            if (null != ctClass) {
+                ctClass.detach();
             }
-            for (CtMethod method : methods) {
-                String signature = method.getGenericSignature();
-                String longName = method.getLongName();
-                String name = method.getName();
-                String signature2 = method.getSignature();
+        }
+
+        return builder.toString();
+    }
+
+    public static List<InjectModifyMethod> getMethods(JarTreeNode node) {
+        String className = node.className();
+        CtClass ctClass = null;
+        List<InjectModifyMethod> methods = new ArrayList<>();
+        try {
+            ctClass = pool.get(className);
+            CtMethod[] ctMethods = ctClass.getMethods();
+            String cd = Descriptor.of(className);
+            if (null != ctMethods && ctMethods.length > 0) {
+                for (CtMethod method : ctMethods) {
+                    InjectModifyMethod m = new InjectModifyMethod();
+                    m.name = method.getName();
+                    m.params = method.getGenericSignature();
+                    methods.add(m);
+                    String signature = method.getGenericSignature();
+                    String longName = method.getLongName();
+                    String name = method.getName();
+                    String signature2 = method.getSignature();
+                }
             }
         }catch (Exception e){
             PluginHelper.error(e);
@@ -138,6 +218,8 @@ public class InjectHelper {
                 ctClass.detach();
             }
         }
+
+        return methods;
     }
 
     /**
@@ -158,12 +240,12 @@ public class InjectHelper {
 
             // 修改方法修饰符
             if (null != clzModify.modifiers && clzModify.modifiers.trim().length() > 0) {
-                int modifiers;
+                int modifiers = 0;
                 if (clzModify.modifiers.contains("public")) {
                     modifiers = AccessFlag.PUBLIC;
                 } else if (clzModify.modifiers.contains("private")) {
                     modifiers = AccessFlag.PRIVATE;
-                } else {
+                } else if (clzModify.modifiers.contains("protected")){
                     modifiers = AccessFlag.PROTECTED;
                 }
                 if (clzModify.modifiers.contains("final")) {
