@@ -1,11 +1,15 @@
 package cn.com.lasong.plugin.idea.ui;
 
-import cn.com.lasong.plugin.idea.jar.dialog.ModifyDialog;
 import cn.com.lasong.plugin.idea.jar.dialog.JarTreeNode;
+import cn.com.lasong.plugin.idea.jar.dialog.ModifyDialog;
 import cn.com.lasong.plugin.idea.jar.jdcore.JDHelper;
+import cn.com.lasong.plugin.idea.utils.PluginHelper;
+import com.intellij.openapi.util.io.FileUtil;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class TabContentTextPanel extends DefaultTabContentPanel implements IResultListener{
     private JPanel contentPanel;
@@ -40,6 +44,16 @@ public class TabContentTextPanel extends DefaultTabContentPanel implements IResu
         ModifyDialog dialog = new ModifyDialog(node);
         dialog.setListener(this);
         dialog.show();
+    }
+
+    @Override
+    protected void saveContent(JarTreeNode node) {
+        File file = new File(jarNode.path);
+        try {
+            FileUtil.writeToFile(file, rTextArea.getText());
+        } catch (IOException e) {
+            PluginHelper.error(e);
+        }
     }
 
     @Override

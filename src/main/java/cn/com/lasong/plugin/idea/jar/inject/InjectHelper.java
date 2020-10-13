@@ -504,14 +504,14 @@ public class InjectHelper {
                 }
 
                 // Index in bytecode array where the instruction starts
-                int startPc = lineNumberAttribute.toStartPc(lineStart + start);
+                LineNumberAttribute.Pc startPc = lineNumberAttribute.toNearPc(lineStart + start);
 
                 // Index in the bytecode array where the following instruction starts
-                int endPc = lineNumberAttribute.toStartPc(lineStart + start + len);
+                LineNumberAttribute.Pc endPc = lineNumberAttribute.toNearPc(lineStart + start + len);
 
                 // Let's now get the bytecode array
                 byte[] code = codeAttribute.getCode();
-                for (int i = startPc; i < endPc; i++) {
+                for (int i = startPc.index; i < endPc.index; i++) {
                     // change byte to a no operation code
                     code[i] = CodeAttribute.NOP;
                 }

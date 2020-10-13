@@ -61,17 +61,23 @@ public class DefaultTabContentPanel {
             rTextArea.setSyntaxEditingStyle(style);
             rTextArea.setCaretPosition(0);
             if (SyntaxConstants.SYNTAX_STYLE_JAVA.equalsIgnoreCase(style)) {
+                rTextArea.setEditable(false);
                 popupMenu = rTextArea.getPopupMenu();
                 JMenuItem modifyItem = new JMenuItem("修改");
                 popupMenu.add(modifyItem, 0);
                 modifyItem.addActionListener(e -> {
                     modifyContent(jarNode);
                 });
-                rTextArea.setPopupMenu(popupMenu);
             } else {
+                rTextArea.setEditable(true);
                 popupMenu = rTextArea.getPopupMenu();
-                rTextArea.setPopupMenu(popupMenu);
+                JMenuItem saveItem = new JMenuItem("保存");
+                popupMenu.add(saveItem, 0);
+                saveItem.addActionListener(e -> {
+                    saveContent(jarNode);
+                });
             }
+            rTextArea.setPopupMenu(popupMenu);
             return getContentPanel();
         }
         return null;
@@ -124,6 +130,14 @@ public class DefaultTabContentPanel {
      * @param node
      */
     protected void modifyContent(JarTreeNode node) {
+
+    }
+
+    /**
+     * 保存文件
+     * @param node
+     */
+    protected void saveContent(JarTreeNode node) {
 
     }
 }
