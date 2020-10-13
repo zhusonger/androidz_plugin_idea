@@ -1,13 +1,13 @@
 <idea-plugin>
     <id>cn.com.lasong.plugin.idea</id>
-    <name>AndroidZApk</name>
+    <name>AndroidZer</name>
     <version>1.0</version>
     <vendor email="song.zhu@lasong.com.cn" url="http://www.lasong.com.cn">猪猪屋</vendor>
 
     <description><![CDATA[
       <h1>AndroidZDex</h1>
       <br/>
-      <p><b>A plugin for decompile apk by apktool.</b></p>
+      <p><b>A plugin for reverse engineering by apktool & javassist & jd-core.</b></p>
       <br/>
       <p><b>集成反编译与修改jar包等多种功能为一体, 简化一些反向工程的操作</b></p>
     ]]></description>
@@ -15,7 +15,7 @@
     <change-notes><![CDATA[
       <h1> Release Note </h1>
       <br/>
-      <p><b>A plugin for decompile apk by apktool.</b></p>
+      <p><b>A plugin for reverse engineering by apktool & javassist & jd-core.</b></p>
       <br/>
       <ul>
         <li>v1.0 init</li>
