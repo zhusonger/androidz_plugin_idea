@@ -123,4 +123,8 @@ public class PluginHelper {
     public static void printlnErr(String group, String s) {
         error(group+": " + s);
     }
+
+    public static boolean isEmpty(String text) {
+        return null == text || text.length() == 0 || text.trim().length() == 0;
+    }
 }

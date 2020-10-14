@@ -27,8 +27,6 @@
         <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:d:grow"/>
         <colspec value="left:4dlu:noGrow"/>
-        <colspec value="fill:max(d;4px):noGrow"/>
-        <colspec value="left:4dlu:noGrow"/>
         <colspec value="fill:d:grow"/>
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="7" anchor="1" fill="1" indent="0" use-parent-layout="false"/>
@@ -55,18 +53,9 @@
               <forms defaultalign-horz="false"/>
             </constraints>
             <properties>
-              <enabled value="false"/>
+              <enabled value="true"/>
               <toolTipText value="修改类的修饰符"/>
               <visible value="true"/>
-            </properties>
-          </component>
-          <component id="990ad" class="javax.swing.JCheckBox" binding="clzModifyCheckBox">
-            <constraints>
-              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-              <forms/>
-            </constraints>
-            <properties>
-              <text value="Edit"/>
             </properties>
           </component>
           <hspacer id="85bf0">
@@ -77,7 +66,7 @@
           </hspacer>
           <hspacer id="daf41">
             <constraints>
-              <grid row="0" column="8" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+              <grid row="0" column="6" row-span="1" col-span="1" vsize-policy="1" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
               <forms defaultalign-horz="false"/>
             </constraints>
           </hspacer>
@@ -188,7 +177,9 @@
                           </grid>
                           <forms defaultalign-horz="false"/>
                         </constraints>
-                        <properties/>
+                        <properties>
+                          <text value=""/>
+                        </properties>
                       </component>
                     </children>
                   </grid>
@@ -329,7 +320,9 @@
             <children>
               <component id="336fa" class="javax.swing.JTextArea" binding="contentTextArea" custom-create="true">
                 <constraints/>
-                <properties/>
+                <properties>
+                  <text value=""/>
+                </properties>
               </component>
             </children>
           </scrollpane>
