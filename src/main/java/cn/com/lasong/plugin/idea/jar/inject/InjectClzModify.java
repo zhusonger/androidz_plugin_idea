@@ -24,7 +24,7 @@ public class InjectClzModify {
     public List<String> importPackages;
 
     // 方法修改
-    public List<InjectModifyMethod> modifyMethods;
+    public List<InjectCtModify> modifyMethods;
     // 是否注入
     public boolean isInject = true;
 
@@ -67,11 +67,11 @@ public class InjectClzModify {
         isInject = inject;
     }
 
-    public List<InjectModifyMethod> getModifyMethods() {
+    public List<InjectCtModify> getModifyMethods() {
         return modifyMethods;
     }
 
-    public void setModifyMethods(InjectModifyMethod[] modifyMethods) {
+    public void setModifyMethods(InjectCtModify[] modifyMethods) {
         this.modifyMethods = Arrays.asList(modifyMethods);
     }
 

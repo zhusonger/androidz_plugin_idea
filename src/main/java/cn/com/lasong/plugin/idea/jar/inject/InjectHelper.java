@@ -114,7 +114,7 @@ public class InjectHelper {
     }
 
     /**
-     * 转换成字符串
+     * int转换成string
      * @param modifiers
      * @return
      */
@@ -164,6 +164,46 @@ public class InjectHelper {
         return builder.toString();
     }
 
+
+    /**
+     * string解析成int
+     * @param modifiersValue
+     * @return
+     */
+    public static int ofModifiers(String modifiersValue) {
+        int modifiers = 0;
+        if (modifiersValue.contains("public")) {
+            modifiers = AccessFlag.PUBLIC;
+        } else if (modifiersValue.contains("private")) {
+            modifiers = AccessFlag.PRIVATE;
+        } else if (modifiersValue.contains("protected")) {
+            modifiers = AccessFlag.PROTECTED;
+        }
+
+        if (modifiersValue.contains("final")) {
+            modifiers |= AccessFlag.FINAL;
+        }
+        if (modifiersValue.contains("static")) {
+            modifiers |= AccessFlag.STATIC;
+        }
+        if (modifiersValue.contains("synchronized")) {
+            modifiers |= AccessFlag.SYNCHRONIZED;
+        }
+        if (modifiersValue.contains("volatile")) {
+            modifiers |= AccessFlag.VOLATILE;
+        }
+        if (modifiersValue.contains("abstract")) {
+            modifiers |= AccessFlag.ABSTRACT;
+        }
+        if (modifiersValue.contains("interface")) {
+            modifiers |= AccessFlag.INTERFACE;
+        }
+        if (modifiersValue.contains("native")) {
+            modifiers |= AccessFlag.NATIVE;
+        }
+        return modifiers;
+    }
+
     /**
      * 获取类的修饰符
      * @param node
@@ -193,27 +233,35 @@ public class InjectHelper {
      * @param node
      * @return
      */
-    public static List<JMethodModel> getMethods(JarTreeNode node) {
+    public static List<JMethodModel> getAllCts(JarTreeNode node) {
         String className = node.className();
         CtClass ctClass = null;
         List<JMethodModel> methods = new ArrayList<>();
         try {
             ctClass = pool.get(className);
+            List<CtBehavior> list = new ArrayList<>();
+            CtConstructor[] ctConstructors = ctClass.getDeclaredConstructors();
+            if (null != ctConstructors && ctConstructors.length > 0) {
+                list.addAll(Arrays.asList(ctConstructors));
+            }
             CtMethod[] ctMethods = ctClass.getDeclaredMethods();
             if (null != ctMethods && ctMethods.length > 0) {
-                for (CtMethod method : ctMethods) {
-                    JMethodModel m = new JMethodModel();
-                    m.name = method.getName();
-                    String params = method.getSignature();
-                    MethodInfo methodInfo = method.getMethodInfo();
-                    if (null != methodInfo) {
-                        params = Descriptor.getParamDescriptor(methodInfo.getDescriptor());
-                    } else if (null != params){
-                        params = params.substring(0, params.indexOf(')') + 1);
-                    }
-                    m.params = params;
-                    methods.add(m);
+                list.addAll(Arrays.asList(ctMethods));
+            }
+
+            for (CtBehavior method : list) {
+                JMethodModel m = new JMethodModel();
+                m.name = method.getName();
+                String params = method.getSignature();
+                MethodInfo methodInfo = method.getMethodInfo();
+                if (null != methodInfo) {
+                    params = Descriptor.getParamDescriptor(methodInfo.getDescriptor());
+                } else if (null != params){
+                    params = params.substring(0, params.indexOf(')') + 1);
                 }
+                m.isConstructor = method instanceof CtConstructor;
+                m.params = params;
+                methods.add(m);
             }
         }catch (Exception e){
             PluginHelper.error(e);
@@ -281,20 +329,24 @@ public class InjectHelper {
             }
 
             // 修改方法
-            List<InjectModifyMethod> modifyMethods = clzModify.modifyMethods;
+            List<InjectCtModify> modifyMethods = clzModify.modifyMethods;
             if (null != modifyMethods && !modifyMethods.isEmpty()) {
-                for (InjectModifyMethod method : modifyMethods) {
+                for (InjectCtModify method : modifyMethods) {
                     String action = method.action;
                     // 修改方法
-                    if (InjectModifyMethod.ACTION_MODIFY.equalsIgnoreCase(action)) {
-                        modifyMethod(injectDebug, ctClass, method);
+                    if (InjectCtModify.ACTION_MODIFY.equalsIgnoreCase(action)) {
+                        if (null != method.name || method.isConstructor) {
+                            modifyCt(injectDebug, ctClass, method);
+                        } else if (null != method.fieldName) {
+                            modifyField(injectDebug, ctClass, method);
+                        }
                     }
                     // 新增属性
-                    else if (InjectModifyMethod.ACTION_ADD_FIELD.equalsIgnoreCase(action)) {
+                    else if (InjectCtModify.ACTION_ADD_FIELD.equalsIgnoreCase(action)) {
                         addField(injectDebug, ctClass, method);
                     }
                     // 新增方法
-                    else if (InjectModifyMethod.ACTION_ADD_METHOD.equalsIgnoreCase(action)) {
+                    else if (InjectCtModify.ACTION_ADD_METHOD.equalsIgnoreCase(action)) {
                         addMethod(injectDebug, ctClass, method);
                     }
                 }
@@ -397,95 +449,97 @@ public class InjectHelper {
     }
 
     /**
-     * 修改方法
+     * 修改内容
      */
-    private static void modifyMethod(boolean injectDebug, CtClass ctClass, InjectModifyMethod method) throws Exception {
-        String name = method.name;
-        if (null == name || name.length() == 0) {
-            return;
-        }
+    private static void modifyCt(boolean injectDebug, CtClass ctClass, InjectCtModify method) throws Exception {
+        modifyCt(null, injectDebug, ctClass, method);
+    }
+    private static void modifyCt(String group, boolean injectDebug, CtClass ctClass, InjectCtModify method) throws Exception {
         CtClass[] params = parseCtClass(method.params);
 
-        CtMethod ctMethod;
-        if (null != params) {
-            ctMethod = ctClass.getDeclaredMethod(name, params);
+        CtBehavior ctBehavior;
+        String name = method.name;
+        if (null == name) {
+            name = ctClass.getSimpleName();
+        }
+        if (method.isConstructor) {
+            ctBehavior = ctClass.getDeclaredConstructor(params);
+            if (injectDebug) {
+                PluginHelper.println(group, "modifyCt getDeclaredConstructor [" + name + "] " + ctBehavior);
+            }
         } else {
-            ctMethod = ctClass.getDeclaredMethod(name);
+            if (PluginHelper.isEmpty(name)) {
+                throw new IOException("modifyCt [" + name + "] name is null !");
+            }
+            if (null != params) {
+                ctBehavior = ctClass.getDeclaredMethod(name, params);
+            } else {
+                ctBehavior = ctClass.getDeclaredMethod(name);
+            }
+            if (injectDebug) {
+                PluginHelper.println(group, "modifyCt getDeclaredMethod [" + name + "] " + ctBehavior);
+            }
         }
 
-        if (null == ctMethod) {
-            throw new IOException("modifyMethod [" + name + "] name is null !");
+        if (null == ctBehavior) {
+            throw new IOException("modifyCt [" + name + "] is not found!");
         }
 
         // 修改方法名
         if (method.newName != null && method.newName.trim().length() > 0) {
-            ctMethod.setName(method.newName);
+            if (ctBehavior instanceof CtMethod) {
+                ((CtMethod)ctBehavior).setName(method.newName);
+            }
             if (injectDebug) {
-                PluginHelper.info("modifyMethod from [" + name + "] to [" + method.newName+"]");
+                PluginHelper.println(group, "modifyCt from [" + name + "] to [" + method.newName+"]");
             }
         }
         // 修改方法修饰符
         if (null != method.modifiers && method.modifiers.trim().length() > 0) {
-            int modifiers;
-            if (method.modifiers.contains("public")) {
-                modifiers = AccessFlag.PUBLIC;
-            } else if (method.modifiers.contains("private")) {
-                modifiers = AccessFlag.PRIVATE;
-            } else {
-                modifiers = AccessFlag.PROTECTED;
-            }
-            if (method.modifiers.contains("final")) {
-                modifiers |= AccessFlag.FINAL;
-            }
-            if (method.modifiers.contains("static")) {
-                modifiers |= AccessFlag.STATIC;
-            }
-            if (method.modifiers.contains("synchronized")) {
-                modifiers |= AccessFlag.SYNCHRONIZED;
-            }
-            ctMethod.setModifiers(modifiers);
+            int modifiers = ofModifiers(method.modifiers);
+            ctBehavior.setModifiers(modifiers);
 
             if (injectDebug) {
-                PluginHelper.info("modifyMethod modifiers [" + method.modifiers + "]");
+                PluginHelper.println(group, "modifyCt modifiers [" + method.modifiers + "]");
             }
         }
 
         String type = method.type;
-        if (null == type || type.length() == 0) {
+        if (PluginHelper.isEmpty(type)) {
             return;
         }
         String content = method.content;
-        if (!type.equalsIgnoreCase("deleteAt") && (null == content || content.length() == 0)) {
-            return;
+        if (!type.equalsIgnoreCase("deleteAt") && PluginHelper.isEmpty(content)) {
+            throw new IOException("modifyCt [" + name + "] type ["+type+"] content can't be empty!");
         }
 
         if (type.equalsIgnoreCase("insertAt") && method.lineNum < 0) {
-            throw new IOException("modifyMethod [" + name + "] lineNum[for insertAt] can't empty !");
+            throw new IOException("modifyCt [" + name + "] lineNum[for insertAt] can't empty !");
         }
         if (type.equalsIgnoreCase("deleteAt") && (method.lineRange == null || method.lineRange.length() == 0)) {
-            throw new IOException("modifyMethod [" + name + "] lineRange[for deleteAt] can't empty!");
+            throw new IOException("modifyCt [" + name + "] lineRange[for deleteAt] can't empty!");
         }
 
         if (type.equalsIgnoreCase("insertBefore")) {
-            ctMethod.insertBefore(content);
+            ctBehavior.insertBefore(content);
         } else if (type.equalsIgnoreCase("insertAfter")) {
-            ctMethod.insertAfter(content);
+            ctBehavior.insertAfter(content);
         } else if (type.equalsIgnoreCase("insertAt")) {
-            int lineStart = ctMethod.getMethodInfo().getLineNumber(0);
-            ctMethod.insertAt(lineStart + method.lineNum, content);
+            int lineStart = ctBehavior.getMethodInfo().getLineNumber(0);
+            ctBehavior.insertAt(lineStart + method.lineNum, content);
         } else if (type.equalsIgnoreCase("setBody")) {
-            ctMethod.setBody(content);
+            ctBehavior.setBody(content);
         } else if (type.equalsIgnoreCase("deleteAt")) {
-            int lineStart = ctMethod.getMethodInfo().getLineNumber(0);
+            int lineStart = ctBehavior.getMethodInfo().getLineNumber(0);
             // Access the code attribute
-            CodeAttribute codeAttribute = ctMethod.getMethodInfo().getCodeAttribute();
+            CodeAttribute codeAttribute = ctBehavior.getMethodInfo().getCodeAttribute();
 
             // Access the LineNumberAttribute
             LineNumberAttribute lineNumberAttribute = (LineNumberAttribute) codeAttribute.getAttribute(LineNumberAttribute.tag);
 
             if (null == lineNumberAttribute) {
                 if (injectDebug)
-                    PluginHelper.info("lineNumberAttribute is null");
+                    PluginHelper.println(group, "lineNumberAttribute is null");
                 return;
             }
 
@@ -497,17 +551,40 @@ public class InjectHelper {
                     continue;
                 }
                 String[] range = item.split("#");
-                int start = Integer.parseInt(range[0]);
+                if (range.length == 0) {
+                    throw new IOException("modifyCt [" + name + "] lineRange [for deleteAt] can't empty!");
+                }
+                int start = Integer.parseInt(range[0].trim());
                 int len = 1;
                 if (range.length > 1) {
-                    len = Integer.parseInt(range[1]);
+                    len = Integer.parseInt(range[1].trim());
                 }
+
+                if (injectDebug)
+                    PluginHelper.println(group, "deleteAt range " + item);
 
                 // Index in bytecode array where the instruction starts
                 LineNumberAttribute.Pc startPc = lineNumberAttribute.toNearPc(lineStart + start);
 
+                if (null == startPc) {
+                    if (injectDebug)
+                        PluginHelper.println(group, "deleteAt start null");
+                    continue;
+                }
+
+                if (injectDebug)
+                    PluginHelper.println(group, "deleteAt start : index = " + startPc.index+", line = " + startPc.line);
+
                 // Index in the bytecode array where the following instruction starts
                 LineNumberAttribute.Pc endPc = lineNumberAttribute.toNearPc(lineStart + start + len);
+                if (null == endPc) {
+                    if (injectDebug)
+                        PluginHelper.println(group, "deleteAt end null");
+                    continue;
+                }
+
+                if (injectDebug)
+                    PluginHelper.println(group, "deleteAt end : index = " + endPc.index+", line = " + endPc.line);
 
                 // Let's now get the bytecode array
                 byte[] code = codeAttribute.getCode();
@@ -519,9 +596,9 @@ public class InjectHelper {
         }
 
         if (injectDebug) {
-            PluginHelper.info("modifyMethod [" + name + "] " + type);
+            PluginHelper.println(group, "modifyCt [" + name + "] " + type);
             if (null != content && content.length() > 0) {
-                PluginHelper.info(content);
+                PluginHelper.println(group, content);
             }
         }
     }
@@ -529,7 +606,7 @@ public class InjectHelper {
     /**
      * 添加属性
      */
-    private static void addField(boolean injectDebug, CtClass ctClass, InjectModifyMethod method) throws Exception {
+    private static void addField(boolean injectDebug, CtClass ctClass, InjectCtModify method) throws Exception {
         CtField ctField = CtField.make(method.content, ctClass);
         ctClass.addField(ctField);
         if (injectDebug)
@@ -539,10 +616,48 @@ public class InjectHelper {
     /**
      * 添加方法
      */
-    private static void addMethod(boolean injectDebug, CtClass ctClass, InjectModifyMethod method) throws Exception {
+    private static void addMethod(boolean injectDebug, CtClass ctClass, InjectCtModify method) throws Exception {
         CtMethod ctMethod = CtMethod.make(method.content, ctClass);
         ctClass.addMethod(ctMethod);
         if (injectDebug)
             PluginHelper.info("addMethod [" + method.content + "]");
+    }
+
+    /**
+     * 修改属性
+     * @param injectDebug
+     * @param ctClass
+     * @param method
+     * @throws Exception
+     */
+    private static void modifyField(boolean injectDebug, CtClass ctClass, InjectCtModify method) throws Exception {
+        modifyField(null, injectDebug, ctClass, method);
+    }
+    private static void modifyField(String group, boolean injectDebug, CtClass ctClass, InjectCtModify method) throws Exception {
+        String fieldName = method.fieldName;
+        CtField ctField;
+        try {
+            ctField = ctClass.getDeclaredField(fieldName);
+        } catch (NotFoundException e) {
+            throw new IOException("modifyField [" + fieldName + "] fieldName is not found !");
+        }
+
+        String newFieldName = method.newFieldName;
+        if (!PluginHelper.isEmpty(newFieldName)) {
+            ctField.setName(newFieldName);
+            if (injectDebug) {
+                PluginHelper.println(group, "modifyField newFieldName [" + newFieldName+"] Successfully!");
+            }
+        }
+
+
+        if (!PluginHelper.isEmpty(method.fieldModifiers)) {
+            int modifiers = ofModifiers(method.fieldModifiers);
+            ctField.setModifiers(modifiers);
+
+            if (injectDebug) {
+                PluginHelper.println(group, "modifyField fieldModifiers [" + method.fieldModifiers+"] Successfully!");
+            }
+        }
     }
 }

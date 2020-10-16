@@ -117,11 +117,11 @@ public class PluginHelper {
     }
 
     public static void println(String group, String s) {
-        info(group+": " + s);
+        info((null != group ? (group+": ") : "") + s);
     }
 
     public static void printlnErr(String group, String s) {
-        error(group+": " + s);
+        error((null != group ? (group+": ") : "") + s);
     }
 
     public static boolean isEmpty(String text) {

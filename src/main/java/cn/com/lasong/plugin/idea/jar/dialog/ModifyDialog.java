@@ -2,7 +2,7 @@ package cn.com.lasong.plugin.idea.jar.dialog;
 
 import cn.com.lasong.plugin.idea.jar.inject.InjectClzModify;
 import cn.com.lasong.plugin.idea.jar.inject.InjectHelper;
-import cn.com.lasong.plugin.idea.jar.inject.InjectModifyMethod;
+import cn.com.lasong.plugin.idea.jar.inject.InjectCtModify;
 import cn.com.lasong.plugin.idea.jar.inject.JMethodModel;
 import cn.com.lasong.plugin.idea.ui.IResultListener;
 import cn.com.lasong.plugin.idea.ui.IconsPlugin;
@@ -62,7 +62,7 @@ public class ModifyDialog extends DialogWrapper {
         methodPanel.setVisible(true);
         optionPanel.setVisible(true);
         optionLayout.show(optionPanel, "modify");
-        List<JMethodModel> methods = InjectHelper.getMethods(jarNode);
+        List<JMethodModel> methods = InjectHelper.getAllCts(jarNode);
         for (JMethodModel model : methods) {
             methodComboBox.addItem(model);
         }
@@ -74,6 +74,8 @@ public class ModifyDialog extends DialogWrapper {
         typeComboBox.addItemListener(e -> updateTypeUI());
         SpinnerNumberModel model = new SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1);
         lineNumSpinner.setModel(model);
+
+        methodComboBox.setEditable(true);
     }
 
 
@@ -90,11 +92,11 @@ public class ModifyDialog extends DialogWrapper {
         String action = (String) actionComboBox.getSelectedItem();
         if (null != action) {
             if (action.equalsIgnoreCase("modify")) {
-                return InjectModifyMethod.ACTION_MODIFY;
+                return InjectCtModify.ACTION_MODIFY;
             } else if (action.equalsIgnoreCase("addField")) {
-                return InjectModifyMethod.ACTION_ADD_FIELD;
+                return InjectCtModify.ACTION_ADD_FIELD;
             } else if (action.equalsIgnoreCase("addMethod")) {
-                return InjectModifyMethod.ACTION_ADD_METHOD;
+                return InjectCtModify.ACTION_ADD_METHOD;
             }
         }
         return null;
@@ -111,23 +113,24 @@ public class ModifyDialog extends DialogWrapper {
                 clzModify.modifiers = clzModifiers;
             }
 
-            InjectModifyMethod method = new InjectModifyMethod();
+            InjectCtModify method = new InjectCtModify();
             method.action = action;
-            if (InjectModifyMethod.ACTION_ADD_FIELD.equals(action)
-                    || InjectModifyMethod.ACTION_ADD_METHOD.equals(action)) {
+            if (InjectCtModify.ACTION_ADD_FIELD.equals(action)
+                    || InjectCtModify.ACTION_ADD_METHOD.equals(action)) {
                 method.content = contentTextArea.getText();
-            } else if (InjectModifyMethod.ACTION_MODIFY.equals(action)) {
+            } else if (InjectCtModify.ACTION_MODIFY.equals(action)) {
                 JMethodModel model = (JMethodModel) methodComboBox.getSelectedItem();
                 String type = (String) typeComboBox.getSelectedItem();
                 if (null != model) {
                     method.params = model.params;
                     method.name = model.name;
+                    method.isConstructor = model.isConstructor;
                 }
                 if (!PluginHelper.isEmpty(contentTextArea.getText()) && null != type
                         && (type.startsWith("insert") || type.equalsIgnoreCase("setBody"))) {
                     method.content = contentTextArea.getText();
                 }
-
+                method.type = type;
                 if ("insertAt".equals(type)) {
                     method.lineNum = (int) lineNumSpinner.getValue();
                 } else if ("deleteAt".equals(type)) {
@@ -141,7 +144,7 @@ public class ModifyDialog extends DialogWrapper {
                 }
             }
 
-            clzModify.setModifyMethods(new InjectModifyMethod[]{method});
+            clzModify.setModifyMethods(new InjectCtModify[]{method});
             byte[] buffer = InjectHelper.injectClass(clzModify);
             if (null != buffer) {
                 File file = new File(jarNode.path);
@@ -189,10 +192,10 @@ public class ModifyDialog extends DialogWrapper {
 
         if (null != action) {
             String content = contentTextArea.getText();
-            if ((InjectModifyMethod.ACTION_ADD_FIELD.equals(action)
-                    || InjectModifyMethod.ACTION_ADD_METHOD.equals(action)) && PluginHelper.isEmpty(content)) {
+            if ((InjectCtModify.ACTION_ADD_FIELD.equals(action)
+                    || InjectCtModify.ACTION_ADD_METHOD.equals(action)) && PluginHelper.isEmpty(content)) {
                 validationInfo = new ValidationInfo("Content can't empty.", contentTextArea);
-            } else if (InjectModifyMethod.ACTION_MODIFY.equals(action)) {
+            } else if (InjectCtModify.ACTION_MODIFY.equals(action)) {
                 JMethodModel model = (JMethodModel) methodComboBox.getSelectedItem();
                 String type = (String) typeComboBox.getSelectedItem();
                 if (null == model) {
@@ -221,11 +224,11 @@ public class ModifyDialog extends DialogWrapper {
      * @param action
      */
     private void updateActionUI(String action) {
-        if (InjectModifyMethod.ACTION_MODIFY.equals(action)) {
+        if (InjectCtModify.ACTION_MODIFY.equals(action)) {
             methodPanel.setVisible(true);
             updateTypeUI();
-        } else if (InjectModifyMethod.ACTION_ADD_FIELD.equals(action)
-            || InjectModifyMethod.ACTION_ADD_METHOD.equals(action)){
+        } else if (InjectCtModify.ACTION_ADD_FIELD.equals(action)
+            || InjectCtModify.ACTION_ADD_METHOD.equals(action)){
             methodPanel.setVisible(false);
             optionPanel.setVisible(false);
         }
