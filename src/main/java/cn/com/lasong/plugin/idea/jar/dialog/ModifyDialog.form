@@ -322,6 +322,7 @@
                 <constraints/>
                 <properties>
                   <text value=""/>
+                  <toolTipText value=""/>
                 </properties>
               </component>
             </children>

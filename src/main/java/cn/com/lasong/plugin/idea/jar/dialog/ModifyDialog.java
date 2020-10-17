@@ -4,6 +4,7 @@ import cn.com.lasong.plugin.idea.jar.inject.InjectClzModify;
 import cn.com.lasong.plugin.idea.jar.inject.InjectHelper;
 import cn.com.lasong.plugin.idea.jar.inject.InjectCtModify;
 import cn.com.lasong.plugin.idea.jar.inject.JMethodModel;
+import cn.com.lasong.plugin.idea.jar.jdcore.JDHelper;
 import cn.com.lasong.plugin.idea.ui.IResultListener;
 import cn.com.lasong.plugin.idea.ui.IconsPlugin;
 import cn.com.lasong.plugin.idea.ui.UIHelper;
@@ -16,6 +17,8 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -52,10 +55,15 @@ public class ModifyDialog extends DialogWrapper {
 
     private IResultListener listener;
 
+    private String mEditText;
+    private int mEditPosition;
+
+    private static String CODE_SOURCE;
     public ModifyDialog(JarTreeNode node) {
         super(PluginHelper.getProject());
         init();
         jarNode = node;
+        CODE_SOURCE = JDHelper.decompile(jarNode.entryName());
         clzNameLabel.setText("Class[" + jarNode.className() + "]");
         clzNameLabel.setIcon(IconsPlugin.CLASS_OBJ_ICON);
         optionLayout = (CardLayout) optionPanel.getLayout();
@@ -76,6 +84,29 @@ public class ModifyDialog extends DialogWrapper {
         lineNumSpinner.setModel(model);
 
         methodComboBox.setEditable(true);
+        contentTextArea.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                super.keyPressed(e);
+                if (contentTextArea.isFocusOwner() && e.getKeyCode() == KeyEvent.VK_ALT) {
+                    mEditText = contentTextArea.getText();
+                    mEditPosition = contentTextArea.getCaretPosition();
+                    contentTextArea.setText(CODE_SOURCE);
+                    contentTextArea.setEditable(false);
+                    contentTextArea.setCaretPosition(0);
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                super.keyReleased(e);
+                if (!contentTextArea.isEditable() && e.getKeyCode() == KeyEvent.VK_ALT) {
+                    contentTextArea.setText(mEditText);
+                    contentTextArea.setEditable(true);
+                    contentTextArea.setCaretPosition(mEditPosition);
+                }
+            }
+        });
     }
 
 
