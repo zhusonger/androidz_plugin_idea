@@ -19,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -366,7 +367,7 @@ public abstract class Decompressor {
   private static List<String> normalizePathAndSplit(@NotNull String path) throws IOException {
     ensureValidPath(path);
     String canonicalPath = FileUtil.toCanonicalPath(path, '/');
-    return FileUtil.splitPath(StringUtil.trimLeading(canonicalPath, '/'), '/');
+    return splitPath(StringUtil.trimLeading(canonicalPath, '/'), '/');
   }
 
   private static void ensureValidPath(@NotNull String entryName) throws IOException {
@@ -379,5 +380,18 @@ public abstract class Decompressor {
   public static File entryFile(@NotNull File outputDir, @NotNull String entryName) throws IOException {
     ensureValidPath(entryName);
     return new File(outputDir, entryName);
+  }
+
+  @NotNull
+  public static List<String> splitPath(@NotNull String path, char separatorChar) {
+    List<String> list = new ArrayList<>();
+    int index = 0;
+    int nextSeparator;
+    while ((nextSeparator = path.indexOf(separatorChar, index)) != -1) {
+      list.add(path.substring(index, nextSeparator));
+      index = nextSeparator + 1;
+    }
+    list.add(path.substring(index));
+    return list;
   }
 }

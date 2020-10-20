@@ -1,7 +1,6 @@
 package cn.com.lasong.plugin.idea.utils;
 
-import com.intellij.notification.NotificationGroup;
-import com.intellij.notification.NotificationType;
+import com.intellij.notification.*;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
@@ -14,8 +13,8 @@ import java.io.Writer;
 
 public class PluginHelper {
 
-    private static final NotificationGroup ERROR = NotificationGroup.balloonGroup("AndroidZ Idea (Errors)");
-    private static final NotificationGroup INFO = NotificationGroup.logOnlyGroup("AndroidZ Idea (Info)");
+    private static final NotificationGroup ERROR = new NotificationGroup("AndroidZer", NotificationDisplayType.BALLOON, true);
+    private static final NotificationGroup INFO = new NotificationGroup("AndroidZer", NotificationDisplayType.NONE, true);
 
     private static Project PROJECT;
 
@@ -62,7 +61,8 @@ public class PluginHelper {
         if (null == message || message.length() <= 0 || message.trim().length() <= 0) {
             return;
         }
-        INFO.createNotification(message, NotificationType.INFORMATION).notify(null);
+        Notification notification = INFO.createNotification(message, NotificationType.INFORMATION);
+        Notifications.Bus.notify(notification);
     }
 
     /**
@@ -74,7 +74,8 @@ public class PluginHelper {
         if (null == message || message.length() <= 0 || message.trim().length() <= 0) {
             return;
         }
-        ERROR.createNotification(message, NotificationType.ERROR).notify(null);
+        Notification notification = ERROR.createNotification(message, NotificationType.ERROR);
+        Notifications.Bus.notify(notification);
     }
 
     public static void error(Throwable throwable) {

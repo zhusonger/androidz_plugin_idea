@@ -18,9 +18,10 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -69,6 +70,23 @@ public class ModifyDialog extends DialogWrapper {
         CODE_SOURCE = JDHelper.decompile(jarNode.entryName());
         clzNameLabel.setText("Class[" + jarNode.className() + "]");
         clzNameLabel.setIcon(IconsPlugin.CLASS_OBJ_ICON);
+        clzNameLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int count = e.getClickCount();
+                if (count >= 2) {
+                    String text = clzNameLabel.getText();
+                    text = text.replace("Class[", "").replace("]", "");
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    // 封装文本内容
+                    Transferable trans = new StringSelection(text);
+                    // 把文本内容设置到系统剪贴板
+                    clipboard.setContents(trans, null);
+
+                    PluginHelper.info("Copy successfully!");
+                }
+            }
+        });
         optionLayout = (CardLayout) optionPanel.getLayout();
         methodPanel.setVisible(true);
         optionPanel.setVisible(true);

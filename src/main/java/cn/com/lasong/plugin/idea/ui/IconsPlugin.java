@@ -20,5 +20,4 @@ public class IconsPlugin {
     public static final Icon FOLDER_ICON = AllIcons.Nodes.Folder;
 
     public static final Icon CLOSE_ICON = AllIcons.Actions.CloseHovered;
-    public static final Icon SAVE_ICON = AllIcons.Actions.Menu_saveall;
 }

@@ -17,6 +17,7 @@
         </constraints>
         <properties>
           <text value="Class[*]"/>
+          <toolTipText value="双击复制"/>
         </properties>
       </component>
       <grid id="8b919" layout-manager="FormLayout">
