@@ -322,7 +322,7 @@
                 <constraints/>
                 <properties>
                   <text value=""/>
-                  <toolTipText value="常按ALT显示源码"/>
+                  <toolTipText value=""/>
                 </properties>
               </component>
             </children>

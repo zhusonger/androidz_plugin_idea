@@ -1,8 +1,8 @@
 package cn.com.lasong.plugin.idea.jar.dialog;
 
 import cn.com.lasong.plugin.idea.jar.inject.InjectClzModify;
-import cn.com.lasong.plugin.idea.jar.inject.InjectHelper;
 import cn.com.lasong.plugin.idea.jar.inject.InjectCtModify;
+import cn.com.lasong.plugin.idea.jar.inject.InjectHelper;
 import cn.com.lasong.plugin.idea.jar.inject.JMethodModel;
 import cn.com.lasong.plugin.idea.jar.jdcore.JDHelper;
 import cn.com.lasong.plugin.idea.ui.IResultListener;
@@ -13,10 +13,12 @@ import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.ValidationInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -57,6 +59,7 @@ public class ModifyDialog extends DialogWrapper {
 
     private String mEditText;
     private int mEditPosition;
+    private int mCodePosition;
 
     private static String CODE_SOURCE;
     public ModifyDialog(JarTreeNode node) {
@@ -89,11 +92,7 @@ public class ModifyDialog extends DialogWrapper {
             public void keyPressed(KeyEvent e) {
                 super.keyPressed(e);
                 if (contentTextArea.isFocusOwner() && e.getKeyCode() == KeyEvent.VK_ALT) {
-                    mEditText = contentTextArea.getText();
-                    mEditPosition = contentTextArea.getCaretPosition();
-                    contentTextArea.setText(CODE_SOURCE);
-                    contentTextArea.setEditable(false);
-                    contentTextArea.setCaretPosition(0);
+                    showCode();
                 }
             }
 
@@ -101,9 +100,7 @@ public class ModifyDialog extends DialogWrapper {
             public void keyReleased(KeyEvent e) {
                 super.keyReleased(e);
                 if (!contentTextArea.isEditable() && e.getKeyCode() == KeyEvent.VK_ALT) {
-                    contentTextArea.setText(mEditText);
-                    contentTextArea.setEditable(true);
-                    contentTextArea.setCaretPosition(mEditPosition);
+                    showEdit();
                 }
             }
         });
@@ -117,6 +114,11 @@ public class ModifyDialog extends DialogWrapper {
     @Override
     protected @Nullable JComponent createCenterPanel() {
         return contentPane;
+    }
+
+    @Override
+    protected @NotNull Action[] createLeftSideActions() {
+        return new Action[] {new CodeAction()};
     }
 
     private String ofAction() {
@@ -245,11 +247,6 @@ public class ModifyDialog extends DialogWrapper {
         return validationInfo;
     }
 
-    @Override
-    public @Nullable JComponent getPreferredFocusedComponent() {
-        return contentTextArea;
-    }
-
     /**
      * 根据action更新显示组件
      * @param action
@@ -291,5 +288,55 @@ public class ModifyDialog extends DialogWrapper {
             optionLayout.show(optionPanel, "modify");
             contentScrollPane.setEnabled(true);
         }
+    }
+
+    private class CodeAction extends AbstractAction {
+
+        private static final String CMD_CODE = "Code";
+        private static final String CMD_EDIT = "Edit";
+        private CodeAction() {
+            super(CMD_CODE);
+        }
+
+        public void performedEdit() {
+            putValue(Action.NAME, CMD_CODE);
+            showEdit();
+        }
+
+        public void performedCode() {
+            putValue(Action.NAME, CMD_EDIT);
+            showCode();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            String command = e.getActionCommand();
+            if (CMD_CODE.equals(command)) {
+                performedCode();
+            } else {
+                performedEdit();
+            }
+        }
+    }
+
+    /**
+     * 显示编辑页面
+     */
+    private void showEdit() {
+        mCodePosition = contentTextArea.getCaretPosition();
+        contentTextArea.setText(mEditText);
+        contentTextArea.setEditable(true);
+        contentTextArea.setCaretPosition(mEditPosition);
+    }
+
+    /**
+     * 显示代码页面
+     */
+    private void showCode() {
+        mEditText = contentTextArea.getText();
+        mEditPosition = contentTextArea.getCaretPosition();
+        contentTextArea.setText(CODE_SOURCE);
+        contentTextArea.setEditable(false);
+        contentTextArea.setCaretPosition(mCodePosition);
     }
 }
