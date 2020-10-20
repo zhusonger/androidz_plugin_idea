@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin require-restart="false">
     <id>cn.com.lasong.plugin.idea</id>
     <name>AndroidZer</name>
     <version>1.0</version>
