@@ -88,20 +88,24 @@ public class ModifyDialog extends DialogWrapper {
 
         methodComboBox.setEditable(true);
         contentTextArea.addKeyListener(new KeyAdapter() {
+
+            boolean change = false;
+
             @Override
             public void keyPressed(KeyEvent e) {
                 super.keyPressed(e);
                 if (contentTextArea.isFocusOwner() && e.getKeyCode() == KeyEvent.VK_ALT) {
-                    showCode();
+                    change = showCode();
                 }
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
                 super.keyReleased(e);
-                if (!contentTextArea.isEditable() && e.getKeyCode() == KeyEvent.VK_ALT) {
+                if (!contentTextArea.isEditable() && e.getKeyCode() == KeyEvent.VK_ALT && change) {
                     showEdit();
                 }
+                change = false;
             }
         });
     }
@@ -322,21 +326,29 @@ public class ModifyDialog extends DialogWrapper {
     /**
      * 显示编辑页面
      */
-    private void showEdit() {
+    private boolean showEdit() {
+        if (contentTextArea.isEditable()) {
+            return false;
+        }
         mCodePosition = contentTextArea.getCaretPosition();
         contentTextArea.setText(mEditText);
         contentTextArea.setEditable(true);
         contentTextArea.setCaretPosition(mEditPosition);
+        return true;
     }
 
     /**
      * 显示代码页面
      */
-    private void showCode() {
+    private boolean showCode() {
+        if (!contentTextArea.isEditable()) {
+            return false;
+        }
         mEditText = contentTextArea.getText();
         mEditPosition = contentTextArea.getCaretPosition();
         contentTextArea.setText(CODE_SOURCE);
         contentTextArea.setEditable(false);
         contentTextArea.setCaretPosition(mCodePosition);
+        return true;
     }
 }
