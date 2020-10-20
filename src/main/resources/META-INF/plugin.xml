@@ -2,7 +2,7 @@
     <id>cn.com.lasong.plugin.idea</id>
     <name>AndroidZer</name>
     <version>1.0</version>
-    <vendor email="song.zhu@lasong.com.cn" url="http://www.lasong.com.cn">朱凇</vendor>
+    <vendor email="song.zhu@lasong.com.cn" url="http://www.lasong.com.cn">ZhuSong</vendor>
 
     <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
     <idea-version since-build="173.0"/>
