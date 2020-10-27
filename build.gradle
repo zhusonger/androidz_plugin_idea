@@ -7,28 +7,52 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 group 'cn.com.lasong.plugin.idea'
-version '1.0'
+version '1.0.0'
 
 patchPluginXml {
     changeNotes """
-      <b>1.0</b>
+      <b>1.0.0</b>
       <ul>
-        <li>display all bytecode in jar file, and modify&save the jar file.</li>
-      </ul>"""
+        <li>display all bytecode for jar file, you can modify & save the jar file.</li>
+      </ul>
+      """
 
     pluginDescription """
-      <h1>AndroidZDex</h1>
+      A decompilation tool for .jar & .apk, the commands like this:
       <br/>
-      <p>
-        <b>A decompiler tool for reverse engineering, check & modify bytecode in jar file. </b><br/>
-        <b>A collection of apktool&jd-core&javassist. Simplified operation for reverse engineering.</b>
-        </p>
+      <ul>
+        <li>JarModify</li>
+        <li>Apk2Smali</li>
+      </ul>
+      </br>
+      For jar way:
+      <ul>
+        <li>select .jar file -> Right Click -> AndroidZer -> JarModify</li>
+        <img src="https://github.com/zhusonger/androidz_plugin_idea/blob/master/images/jar1.png?raw=true" width="320" height="220">
+      </ul>
+      </br>
+      For apk way:
+      <ul>
+        <li>select .apk file -> Right Click -> AndroidZer -> Apk2Smali</li>
+      </ul>
+      
+      一个用于jar与apk文件的反编译工具, 可用的命令如下:
       <br/>
-      <p>
-        <b>为了逆向工程而创建的反编译工具, 可以检查和修改jar包内的字节码文件。</b><br/>
-        <b>apktool&jd-core&javassist的一个集合, 简化逆向工程。</b>
-      </p>
-    """
+      <ul>
+        <li>JarModify</li>
+        <li>Apk2Smali</li>
+      </ul>
+      </br>
+      用于jar的方式:
+      <ul>
+        <li>选择jar文件 -> 右键 -> AndroidZer -> JarModify</li>
+      </ul>
+      </br>
+      用于apk的方式:
+      <ul>
+        <li>选择apk文件 -> 右键 -> AndroidZer -> Apk2Smali</li>
+      </ul>
+      """
 }
 
 repositories {
